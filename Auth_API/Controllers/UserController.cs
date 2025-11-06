@@ -1,11 +1,11 @@
-using Auth_API.Data;
-using Auth_API.Models;
-using Auth_API.Options;
-using Auth_API.Utility;
+using Auth.Api.Data;
+using Auth.Api.Models;
+using Auth.Api.Options;
+using Auth.Api.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Auth_API.Controllers;
+namespace Auth.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

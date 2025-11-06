@@ -1,8 +1,8 @@
-﻿using Auth_API.Data.Configurations;
-using Auth_API.Models;
+﻿using Auth.Api.Data.Configurations;
+using Auth.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Auth_API.Data
+namespace Auth.Api.Data
 {
     public class AuthContext : DbContext
     {

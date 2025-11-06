@@ -1,15 +1,14 @@
-
-using Auth_API.Contracts;
-using Auth_API.Data;
-using Auth_API.Options;
-using Auth_API.Services;
+using Auth.Api.Contracts;
+using Auth.Api.Data;
+using Auth.Api.Options;
+using Auth.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-namespace Auth_API
+namespace Auth.Api
 {
     public class Program
     {

@@ -1,5 +1,5 @@
-﻿using Sales.Domain._common.Base;
-using Sales.Domain._common.ValueObjects;
+﻿using Sales.Domain.Common.Base;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.PaymentSessionAgg.Events;
 namespace Sales.Domain.PaymentSessionAgg.Models
 {

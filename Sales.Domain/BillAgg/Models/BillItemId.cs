@@ -1,10 +1,8 @@
-﻿
-
-using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.BillAgg.Models
 {
-    public class BillItemId : StronglyTypedId
+    public record BillItemId : StronglyTypedId
     {
         public BillItemId(Guid value) : base(value)
         {

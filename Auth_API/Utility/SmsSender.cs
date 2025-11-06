@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-namespace Auth_API.Utility
+namespace Auth.Api.Utility
 {
     public static class SmsSender
     {

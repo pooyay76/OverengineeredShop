@@ -1,4 +1,4 @@
-﻿using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 using Sales.Domain.OrderAgg.Models;
 
 namespace Sales.Domain.OrderAgg.Events

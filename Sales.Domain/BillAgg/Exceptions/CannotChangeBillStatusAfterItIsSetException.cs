@@ -1,7 +1,6 @@
-﻿
-using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
-namespace Sales.Domain.BillAgg.Models
+namespace Sales.Domain.BillAgg.Exceptions
 {
     public class CannotChangeBillStatusAfterItIsSetException : DomainException
     {

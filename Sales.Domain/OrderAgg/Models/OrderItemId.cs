@@ -1,8 +1,8 @@
-﻿using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.OrderAgg.Models
 {
-    public sealed class OrderItemId : StronglyTypedId
+    public sealed record OrderItemId : StronglyTypedId
     {
         public OrderItemId(Guid value) : base(value)
         {

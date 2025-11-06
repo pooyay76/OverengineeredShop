@@ -1,4 +1,4 @@
-﻿namespace Auth_API.Contracts
+﻿namespace Auth.Api.Contracts
 {
     public interface IPermissionService
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Auth_API.Utility
+namespace Auth.Api.Utility
 {
     public static class RandomGenerator
     {
@@ -23,7 +23,7 @@ namespace Auth_API.Utility
                 if (num < 26)
                     letter = Convert.ToChar(num + 65);
                 else
-                    letter = Convert.ToChar((num - 26) + 48);
+                    letter = Convert.ToChar(num - 26 + 48);
                 strBuilder.Append(letter);
             }
             return strBuilder.ToString();

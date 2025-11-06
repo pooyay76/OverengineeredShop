@@ -1,8 +1,8 @@
-﻿using Auth_API.Models;
+﻿using Auth.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Auth_API.Data.Configurations
+namespace Auth.Api.Data.Configurations
 {
     public class UserEntityConfigurations : IEntityTypeConfiguration<User>
     {

@@ -1,29 +1,40 @@
-using Catalog_API.Contracts.Commands;
-using Catalog_API.Contracts.Queries;
-using Catalog_API.Data;
-using Catalog_API.Models;
+using Catalog.Api.Commands;
+using Catalog.Api.Contracts.Interfaces;
+using Catalog.Api.Data;
+using Catalog.Api.Models;
+using Catalog.Api.Queries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace Catalog_API.Controllers;
+namespace Catalog.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class ProductsController : ControllerBase
 {
     private readonly CatalogContext catalogContext;
-    public ProductsController(CatalogContext catalogContext)
+    private readonly IMediaClient mediaClientExternalServices;
+    private readonly IConfiguration configuration;
+    public ProductsController(CatalogContext catalogContext, IMediaClient mediaClientExternalServices, IConfiguration configuration)
     {
         this.catalogContext = catalogContext;
+        this.mediaClientExternalServices = mediaClientExternalServices;
+        this.configuration = configuration;
     }
 
     [HttpPost("create", Name = "CreateProduct")]
-    public IActionResult Create(CreateProductCommand command)
+    public async Task<IActionResult> CreateAsync([FromForm]CreateProductCommand command)
     {
-
-        Product product = new(command.Name, command.Description);
+        var fileExtension = Path.GetExtension(command.ProductPicture.FileName).TrimStart('.');
+        using var fileStream = command.ProductPicture.OpenReadStream();
+        byte[] fileData = new byte[fileStream.Length];
+        fileStream.Read(fileData, 0, fileData.Length);
+        var result = await mediaClientExternalServices.UploadMediaAsync(fileExtension, fileData);
+        
+        Product product = new(command.Name, command.Description,result.MediaPath);
         catalogContext.Products.Add(product);
         catalogContext.SaveChanges();
-        return Ok();
+        return Ok(product.Id);
 
     }
 
@@ -38,8 +49,6 @@ public class ProductsController : ControllerBase
         product.AssignToProductCategory(command.ProductCategoryId);
         catalogContext.SaveChanges();
         return Ok();
-
-
     }
 
 
@@ -50,7 +59,10 @@ public class ProductsController : ControllerBase
         Product product = catalogContext.Products.Find(id);
         if (product == null)
             throw new KeyNotFoundException();
-        var result = new ProductDTO { Id = product.Id, Name = product.Name, Description = product.Description };
+
+        var mediaHostUrl = configuration.GetSection("External")["MediaHost"];
+        var result = new ProductDTO { Id = product.Id, Name = product.Name, Description = product.Description,
+        PictureUrl = $"{mediaHostUrl}/Medias/{product.PictureMediaAddress}"};
         return Ok(result);
 
 
@@ -65,23 +77,31 @@ public class ProductsController : ControllerBase
         if (product == null)
             throw new KeyNotFoundException();
         product.Edit(command.Name, command.Description);
+
         catalogContext.Products.Update(product);
         catalogContext.SaveChanges();
         return Ok();
 
     }
 
+
+
     [HttpGet("getAll", Name = "GetProducts")]
-    public ActionResult<List<ProductDTO>> GetProducts()
+    public async Task<ActionResult<List<ProductDTO>>> GetProductsAsync()
     {
-        return Ok(catalogContext.Products
+        var mediaHostUrl = configuration.GetSection("External")["MediaHost"];
+
+        return Ok(await catalogContext.Products.Include(x=>x.Items)
             .Select(x => new ProductDTO
             {
                 Id = x.Id,
                 Description = x.Description,
                 Name = x.Name,
-                IsDraftMode = x.IsDraftMode,
-                CategoryId = x.ProductCategoryId
-            }).ToList());
+                IsPublished = x.IsPublished,
+                CategoryId = x.CategoryId,
+                PictureUrl = $"{mediaHostUrl}/Medias/{x.PictureMediaAddress}",
+                Price = x.IsPublished ? x.Items.Min(y => y.Price.Amount).ToString() : ""
+            }).ToListAsync());
+
     }
 }

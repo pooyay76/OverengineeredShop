@@ -1,6 +1,6 @@
-﻿using Sales.Domain._common.Base;
-using Sales.Domain.BillAgg.Contracts;
+﻿using Sales.Domain.BillAgg.Contracts;
 using Sales.Domain.BillAgg.Events;
+using Sales.Domain.Common.Base;
 using Sales.Domain.ShoppingCartAgg.Contracts;
 
 namespace Sales.Domain.ShoppingCartAgg.EventHandlers

@@ -9,6 +9,5 @@ namespace Sales.Domain.BillAgg.Contracts
         Task<Bill> GetAsync(Expression<Func<Bill, bool>> predicate);
         Task<Bill> GetOrThrowAsync(Expression<Func<Bill, bool>> predicate);
         Task<Bill> GetActiveAsync(Expression<Func<Bill, bool>> predicate);
-        Task GetAsync();
     }
 }

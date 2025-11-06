@@ -1,5 +1,5 @@
-﻿using Sales.Domain._common.ValueObjects;
-using Sales.Domain.BillAgg.Models;
+﻿using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common.ValueObjects;
 
 namespace Sales.Domain.BillAgg.Contracts
 {

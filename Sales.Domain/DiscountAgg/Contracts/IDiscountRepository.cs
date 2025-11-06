@@ -5,7 +5,7 @@ namespace Sales.Domain.DiscountAgg.Contracts
     public interface IDiscountRepository
     {
         Task AddAsync(Discount discount);
-        Task UpdateAsync(Discount discount);
+        Task<Discount> UpdateAsync(Discount discount);
 
 
         Task<Discount> GetAsync(DiscountId id);

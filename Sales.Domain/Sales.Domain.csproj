@@ -14,7 +14,7 @@
     <Folder Include="DiscountAgg\Exceptions\" />
     <Folder Include="OrderAgg\ValueObjects\" />
     <Folder Include="PaymentSessionAgg\Exceptions\" />
-    <Folder Include="_common\Contracts\" />
   </ItemGroup>
+
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace Auth_API.Models
+﻿namespace Auth.Api.Models
 {
     public class Permission
     {

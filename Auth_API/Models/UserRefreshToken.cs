@@ -1,4 +1,4 @@
-﻿namespace Auth_API.Models
+﻿namespace Auth.Api.Models
 {
     public class UserRefreshToken
     {
@@ -18,9 +18,6 @@
             ExpirationDateTime = DateTime.UtcNow + TimeSpan.FromMinutes(expirationMinutes);
             IsValid = true;
         }
-        private UserRefreshToken()
-        {
 
-        }
     }
 }

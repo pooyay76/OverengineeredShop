@@ -1,7 +1,7 @@
-﻿using Catalog_API.Exceptions;
+﻿using Catalog.Api.Exceptions;
 using System.Text.Json;
 
-namespace Catalog_API.Middlewares
+namespace Catalog.Api.Middlewares
 {
     public class ExceptionMiddleware
     {

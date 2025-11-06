@@ -1,8 +1,8 @@
-﻿using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.PaymentSessionAgg.Models
 {
-    public class PaymentSessionId : StronglyTypedId
+    public record PaymentSessionId : StronglyTypedId
     {
         public PaymentSessionId(Guid value) : base(value)
         {

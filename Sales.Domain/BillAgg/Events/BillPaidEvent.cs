@@ -1,7 +1,7 @@
-﻿using Sales.Domain._common;
-using Sales.Domain._common.Base;
-using Sales.Domain._common.ValueObjects;
-using Sales.Domain.BillAgg.Models;
+﻿using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
+using Sales.Domain.Common.ValueObjects;
 
 namespace Sales.Domain.BillAgg.Events
 {
@@ -14,7 +14,7 @@ namespace Sales.Domain.BillAgg.Events
         public BillPaidEvent(CustomerId CustomerId, BillId billId, List<BillItem> billItems,
             Money amount, DateTime paidAt) : base(billId)
         {
-            CustomerId = CustomerId;
+            this.CustomerId = CustomerId;
             PurchasedItems = billItems.Select(x => new ProductItemQuantity()
             {
                 ProductItemId = x.ProductItemId,

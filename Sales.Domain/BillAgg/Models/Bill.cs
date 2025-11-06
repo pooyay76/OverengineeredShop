@@ -1,10 +1,10 @@
 ﻿#nullable enable
-using Sales.Domain._common;
-using Sales.Domain._common.Base;
-using Sales.Domain._common.ValueObjects;
 using Sales.Domain.BillAgg.Constants;
 using Sales.Domain.BillAgg.Events;
 using Sales.Domain.BillAgg.Exceptions;
+using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Domain.BillAgg.Models
@@ -13,8 +13,11 @@ namespace Sales.Domain.BillAgg.Models
     {
 
         public CustomerId CustomerId { get; private set; }
+
+        //empty at construction, can be set at any time via method SetSession
         public string PaymentSessionId { get; private set; } = "";
         public List<BillItem> BillItems { get; private set; } = [];
+        public ShippingInformation ShippingInformation { get; private set; }
         public BillStatus BillStatus { get; private set; } = BillStatus.AwaitingPayment;
 
         //this will be used later when payment session is introduced
@@ -38,12 +41,22 @@ namespace Sales.Domain.BillAgg.Models
         public DiscountId? BillDiscountId { get; private set; }
         public Discount? BillDiscount { get; private set; }
 
-        internal Bill(CustomerId userId, List<BillItem> items, Money shippingCost,
-            Discount? billDiscount = null)
+        private Bill()
+        {
+
+        }
+        internal Bill(CustomerId userId, List<BillItem> items, ShippingInformation shippingInformation,
+           Money shippingCost, Discount? billDiscount = null)
         {
             CustomerId = userId;
             ShippingCost = shippingCost;
             BillDiscount = billDiscount;
+
+            if (items == null || items.Count == 0)
+            {
+                throw new EmptyBillException();
+            }
+
             BillItems.AddRange(items);
 
             TotalItemPricesBase = new Money(items.Sum(x => x.UnitPriceBase.GetValue()));
@@ -51,10 +64,7 @@ namespace Sales.Domain.BillAgg.Models
             TotalItemsDiscountedAmount = new Money(items.Sum(x => x.DiscountedAmount.GetValue()));
 
             TotalTax = new Money(TaxPercentageAmountConstant.Value * TotalItemsPriceWithDiscount.GetValue());
-            if (items == null || items.Count == 0)
-            {
-                throw new EmptyBillException();
-            }
+
             TotalBilling = TotalItemsPriceWithDiscount + TotalTax + ShippingCost;
 
 
@@ -74,6 +84,7 @@ namespace Sales.Domain.BillAgg.Models
             BillStatus = BillStatus.AwaitingPayment;
 
             AddDomainEvent(new BillCreatedEvent(Id));
+            ShippingInformation = shippingInformation;
         }
         internal void SetSession(string sessionId)
         {
@@ -86,6 +97,7 @@ namespace Sales.Domain.BillAgg.Models
                 throw new SessionIdCannotBeEmptyException();
             }
             PaymentSessionId = sessionId;
+            AddDomainEvent(new BillSessionIdHasBeenSetEvent(Id, sessionId));
         }
         internal void MarkAsPaid()
         {

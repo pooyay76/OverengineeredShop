@@ -1,5 +1,5 @@
-﻿using Sales.Domain._common;
-using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.DiscountAgg.Models
 {
@@ -12,7 +12,10 @@ namespace Sales.Domain.DiscountAgg.Models
         public DiscountType DiscountType { get; private set; }
         public DateTime StartDate { get; init; } = DateTime.UtcNow;
         public DateTime EndDate { get; private set; }
+        private Discount()
+        {
 
+        }
         public Discount(int discountPercentage, ProductItemId productItemId, string description,
             DiscountTargetType targetType, DiscountType discountType, DateTime endDate)
         {

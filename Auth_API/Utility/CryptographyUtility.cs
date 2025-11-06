@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Auth_API.Utility;
+namespace Auth.Api.Utility;
 
 public static class CryptographyUtility
 {

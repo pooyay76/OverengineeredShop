@@ -1,7 +1,7 @@
 ﻿
 using MediatR;
-using Sales.Domain._common;
-using Sales.Domain._common.ValueObjects;
+using Sales.Domain.Common;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.ShoppingCartAgg.Contracts;
 
 namespace Sales.Application.ShoppingCartUseCases.Queries
@@ -23,12 +23,13 @@ namespace Sales.Application.ShoppingCartUseCases.Queries
             var obj = await shoppingCartRepository.GetOrThrowAsync(x => x.Id == request.CustomerId);
             GetUserShoppingCartQueryDto result = new()
             {
-                Items = obj.ShoppingCartItems.Select(x => new GetUserShoppingCartQueryDto()
+                Items = obj.ShoppingCartItems.Select(x => new ProductItemQuantity()
                 {
-                    Items = x.S
-                }
-                )
+                    ProductItemId = x.ProductItemId,
+                    Quantity = x.Quantity
+                }).ToList()
             };
+            return result;
         }
     }
     public class GetUserShoppingCartQueryDto

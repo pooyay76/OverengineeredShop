@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using Sales.Domain._common;
-using Sales.Domain._common.Base;
-using Sales.Domain._common.ValueObjects;
 using Sales.Domain.BillAgg.Exceptions;
+using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Domain.BillAgg.Models
@@ -22,7 +22,10 @@ namespace Sales.Domain.BillAgg.Models
         public DiscountId? DiscountId { get; private set; }
         public Discount? Discount { get; private set; }
         public decimal DiscountPercentage { get; private set; }
+        private BillItem()
+        {
 
+        }
         internal BillItem(ProductItemId productId, int quantity, Money unitPriceBase, Discount? discount)
         {
             ProductItemId = productId;

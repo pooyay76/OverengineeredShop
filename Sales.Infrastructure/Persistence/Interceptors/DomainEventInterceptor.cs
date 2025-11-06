@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Sales.Domain._common.Base;
+using Sales.Domain.Common.Base;
 
 namespace Sales.Infrastructure.Persistence.Interceptors
 {

@@ -1,7 +1,7 @@
-﻿using Auth_API.Contracts;
-using Auth_API.Data;
+﻿using Auth.Api.Contracts;
+using Auth.Api.Data;
 
-namespace Auth_API.Services
+namespace Auth.Api.Services
 {
     public class PermissionService : IPermissionService
     {

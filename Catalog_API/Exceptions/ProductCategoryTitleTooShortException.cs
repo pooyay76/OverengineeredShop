@@ -1,8 +1,8 @@
-﻿namespace Catalog_API.Exceptions
+﻿namespace Catalog.Api.Exceptions
 {
     public class ProductCategoryTitleTooShortException : ExceptionBase
     {
-        private static readonly string DefaultMessage = "Product name cannot be less than 2 characters";
+        private static readonly string DefaultMessage = "Product category name cannot be less than 2 characters";
         public ProductCategoryTitleTooShortException() : base(DefaultMessage)
         {
         }

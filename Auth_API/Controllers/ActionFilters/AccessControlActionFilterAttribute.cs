@@ -1,8 +1,8 @@
-﻿using Auth_API.Contracts;
+﻿using Auth.Api.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Auth_API.Controllers.ActionFilters
+namespace Auth.Api.Controllers.ActionFilters
 {
     public class AccessControlActionFilterAttribute : ActionFilterAttribute
     {

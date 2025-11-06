@@ -30,6 +30,8 @@ namespace Sales.Infrastructure.Persistence.Repositories
             return salesDbContext.Bills.FirstOrDefaultAsync(predicate);
         }
 
+
+
         public async Task<Bill> GetOrThrowAsync(Expression<Func<Bill, bool>> predicate)
         {
             var obj = await GetAsync(predicate);

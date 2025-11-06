@@ -1,7 +1,7 @@
-﻿using Sales.Domain.PriceHistoryAgg.Models;
+﻿using Sales.Domain.PriceLabelAgg.Models;
 using System.Linq.Expressions;
 
-namespace Sales.Domain.PriceHistoryAgg.Contracts
+namespace Sales.Domain.PriceLabelAgg.Contracts
 {
     public interface IPriceHistoryRepository
     {

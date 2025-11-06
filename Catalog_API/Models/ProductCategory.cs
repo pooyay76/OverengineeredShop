@@ -1,6 +1,7 @@
-﻿using Catalog_API.Exceptions;
+﻿
+using Catalog.Api.Exceptions;
 
-namespace Catalog_API.Models
+namespace Catalog.Api.Models
 {
     public class ProductCategory
     {

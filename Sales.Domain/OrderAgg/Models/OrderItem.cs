@@ -1,5 +1,5 @@
-﻿using Sales.Domain._common;
-using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.OrderAgg.Models
 {
@@ -7,8 +7,12 @@ namespace Sales.Domain.OrderAgg.Models
     {
         public ProductItemId ProductItemId { get; init; }
         public int Quantity { get; init; }
+        public Order Order { get; set; }
 
+        private OrderItem()
+        {
 
+        }
 
         public OrderItem(ProductItemId productItemId, int quantity)
         {

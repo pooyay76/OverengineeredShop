@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common;
 using Sales.Domain.OrderAgg.Models;
 namespace Sales.Infrastructure.Persistence.Configurations
 {
@@ -10,22 +12,20 @@ namespace Sales.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("Orders");
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new OrderId(x));
+            builder.Property(x => x.BillId).HasConversion(x => x.Value, x => new BillId(x));
+            builder.Property(x => x.CustomerId).HasConversion(x => x.Value, x => new CustomerId(x));
+
             builder.Property(x => x.OrderStatus).HasConversion<string>();
-            builder.HasOne(x => x.ShoppingCart).WithOne().HasForeignKey<Order>(x => x.ShoppingCartId);
-            builder.OwnsOne(x => x.ReceiverInfo, y =>
+
+            builder.OwnsMany(x => x.OrderItems, x =>
             {
-                y.ToTable("ReceiverInformation");
-                y.HasKey(z => z.Id);
-
-                y.Property(z => z.Province).HasMaxLength(60).IsRequired();
-                y.Property(z => z.City).HasMaxLength(60).IsRequired();
-                y.Property(z => z.Address).HasMaxLength(250).IsRequired();
-                y.Property(z => z.PostalCode).HasMaxLength(25).IsRequired();
-                y.Property(z => z.ContactPhoneNumber).HasMaxLength(60).IsRequired();
-                y.Property(z => z.ReceiverFirstName).HasMaxLength(60).IsRequired();
-                y.Property(z => z.ReceiverLastName).HasMaxLength(60).IsRequired();
-
+                x.WithOwner(y=>y.Order);
+                x.ToTable("OrderItems");
+                x.Property(y => y.Id).HasConversion(y => y.Value, y => new OrderItemId(y));
+                x.Property(y => y.ProductItemId).HasConversion(y => y.Value, y => new ProductItemId(y));
             });
+
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using Catalog_API.Models;
+﻿using Catalog.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Catalog_API.Data.Configurations
+namespace Catalog.Api.Data.Configurations
 {
     public class ProductCategoryConfigurations : IEntityTypeConfiguration<ProductCategory>
     {
@@ -10,8 +10,8 @@ namespace Catalog_API.Data.Configurations
         {
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Title).HasMaxLength(150);
-            builder.HasMany(x => x.Products).WithOne(x => x.ProductCategory)
-            .HasForeignKey(x => x.ProductCategoryId).IsRequired(false);
+            builder.HasMany(x => x.Products).WithOne(x => x.Category)
+            .HasForeignKey(x => x.CategoryId).IsRequired(false);
         }
     }
 }

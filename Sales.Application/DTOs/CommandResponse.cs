@@ -2,8 +2,8 @@
 {
     public class CommandResponse
     {
-        public bool IsSuccessful { get; set; } = false;
-        public List<string> Errors { get; init; } = [];
+        private bool IsSuccessful { get; set; } = false;
+        private List<string> Errors { get; init; } = [];
         public CommandResponse Succeeded()
         {
             IsSuccessful = true;

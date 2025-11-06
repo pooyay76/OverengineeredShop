@@ -1,0 +1,17 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Sales.Infrastructure.External.Client.Catalog";
+
+package catalog;
+
+service CatalogServices{
+	rpc ProductExists(ProductExistsRequest) returns (ProductExistsResponse);
+}
+
+message ProductExistsRequest{
+	int64 id = 1;
+}
+
+message ProductExistsResponse{
+	bool exists = 1;
+}

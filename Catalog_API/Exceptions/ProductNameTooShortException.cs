@@ -1,4 +1,4 @@
-﻿namespace Catalog_API.Exceptions
+﻿namespace Catalog.Api.Exceptions
 {
     public class ProductNameTooShortException : ExceptionBase
     {

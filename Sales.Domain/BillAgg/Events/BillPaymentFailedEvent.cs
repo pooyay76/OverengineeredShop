@@ -1,6 +1,5 @@
-﻿
-using Sales.Domain._common.Base;
-using Sales.Domain.BillAgg.Models;
+﻿using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.BillAgg.Events
 {
@@ -8,6 +7,7 @@ namespace Sales.Domain.BillAgg.Events
     {
         public BillPaymentFailedEvent(BillId id) : base(id)
         {
+
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Sales.Infrastructure.Persistence.Repositories
 
         public Task<List<Discount>> GetActiveDiscountsAsync()
         {
+            throw new NotImplementedException();
         }
 
         public Task<List<Discount>> GetAllAsync()

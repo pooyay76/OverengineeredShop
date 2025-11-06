@@ -1,4 +1,4 @@
-﻿namespace Auth_API.Options
+﻿namespace Auth.Api.Options
 {
     public record JwtOptions
     {

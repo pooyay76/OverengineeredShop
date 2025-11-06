@@ -1,6 +1,6 @@
-﻿using Auth_API.Utility;
+﻿using Auth.Api.Utility;
 
-namespace Auth_API.Models
+namespace Auth.Api.Models
 {
     public class User
     {
@@ -78,7 +78,7 @@ namespace Auth_API.Models
 
             //after 2 mins this will be turned into an empty string in DB by a background service
             SmsCode = RandomGenerator.GenerateRandomText(6);
-            SmsSender.SendSmsCode(this.PhoneNumber, this.SmsCode);
+            SmsSender.SendSmsCode(PhoneNumber, SmsCode);
         }
 
         public bool VerifySmsCode(string code)

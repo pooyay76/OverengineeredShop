@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Sales.Domain.PriceHistoryAgg.Contracts;
-using Sales.Domain.PriceHistoryAgg.Models;
+using Sales.Domain.PriceLabelAgg.Contracts;
+using Sales.Domain.PriceLabelAgg.Models;
 using System.Linq.Expressions;
 
 namespace Sales.Infrastructure.Persistence.Repositories
@@ -14,6 +14,10 @@ namespace Sales.Infrastructure.Persistence.Repositories
             this.salesDbContext = salesDbContext;
         }
 
+        public Task<PriceLabel> Add(PriceLabel entity)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<List<PriceLabel>> GetLatestPricesAsync(Expression<Func<PriceLabel, bool>> predicate)
         {

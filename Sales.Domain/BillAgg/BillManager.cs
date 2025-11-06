@@ -1,13 +1,12 @@
-﻿
-using Sales.Domain._common;
-using Sales.Domain._common.ValueObjects;
-using Sales.Domain.BillAgg.Contracts;
+﻿using Sales.Domain.BillAgg.Contracts;
 using Sales.Domain.BillAgg.Exceptions;
 using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Contracts;
 using Sales.Domain.DiscountAgg.Models;
-using Sales.Domain.PriceHistoryAgg.Contracts;
-using Sales.Domain.PriceHistoryAgg.Models;
+using Sales.Domain.PriceLabelAgg.Contracts;
+using Sales.Domain.PriceLabelAgg.Models;
 using Sales.Domain.ShoppingCartAgg.Contracts;
 
 namespace Sales.Domain.BillAgg
@@ -19,17 +18,18 @@ namespace Sales.Domain.BillAgg
         private readonly IPriceHistoryRepository priceHistoryRepository;
         private readonly IPaymentGatewayService paymentGatewayService;
         private readonly IBillRepository billRepository;
-        private readonly IShippingService shippingService;
+        //private readonly IShippingService shippingService;
 
         public BillManager(IShoppingCartRepository shoppingCartRepository,
             IDiscountRepository discountRepository, IPriceHistoryRepository priceHistoryRepository,
-            IPaymentGatewayService paymentGatewayService, IShippingService shippingService)
+            IPaymentGatewayService paymentGatewayService, IBillRepository billRepository)
         {
             this.shoppingCartRepository = shoppingCartRepository;
             this.discountRepository = discountRepository;
             this.priceHistoryRepository = priceHistoryRepository;
             this.paymentGatewayService = paymentGatewayService;
-            this.shippingService = shippingService;
+            //this.shippingService = shippingService;
+            this.billRepository = billRepository;
         }
         public async Task<Bill> CreateAsync(CustomerId customerId, CustomerType userRole, ShippingInformation receiverInformation)
         {
@@ -39,9 +39,12 @@ namespace Sales.Domain.BillAgg
             if (cart.ShoppingCartItems.Count == 0)
                 throw new ShoppingCartEmptyException();
 
+
+            //bills stay active for 15 mins after creation, ensuring customers total price doesnt change
+            //for that window
             var activeBill = await billRepository.GetActiveAsync(x => x.CustomerId == customerId);
 
-
+            //if a bill is currently active, dont create a new one
             if (activeBill != null)
             {
                 var cartItems = cart.ShoppingCartItems.Select(x => x.ProductItemId).ToList();
@@ -94,15 +97,15 @@ namespace Sales.Domain.BillAgg
             //later, validate order item availability from warehouse
             Money shipmentValue = new Money(billItems.Sum(x => x.UnitPriceBase.GetValue()));
 
-            var shippingCost = shippingService.GetShippingCost(shipmentValue,
-                billItems.Select(x => new ProductItemQuantity()
-                {
-                    ProductItemId = x.ProductItemId,
-                    Quantity = x.Quantity
-                }).ToList(),
-                receiverInformation);
-
-            Bill bill = new(customerId, billItems, shippingCost, billDiscount);
+            //var shippingCost = shippingService.GetShippingCost(shipmentValue,
+            //    billItems.Select(x => new ProductItemQuantity()
+            //    {
+            //        ProductItemId = x.ProductItemId,
+            //        Quantity = x.Quantity
+            //    }).ToList(),
+            //    receiverInformation);
+            var shippingCost = new Money(0);
+            Bill bill = new(customerId, billItems, receiverInformation, shippingCost, billDiscount);
 
             string sessionId = await paymentGatewayService.GetNewSessionIdAsync(bill.TotalBilling, bill.Id);
             bill.SetSession(sessionId);

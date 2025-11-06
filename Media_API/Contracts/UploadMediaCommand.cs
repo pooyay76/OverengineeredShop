@@ -1,4 +1,4 @@
-﻿namespace Media_API.Contracts
+﻿namespace Media.Api.Contracts
 {
     public class UploadMediaCommand
     {

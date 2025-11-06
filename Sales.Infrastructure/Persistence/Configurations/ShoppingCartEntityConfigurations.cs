@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Sales.Domain.Common;
 using Sales.Domain.ShoppingCartAgg.Models;
 
 namespace Sales.Infrastructure.Persistence.Configurations
@@ -11,11 +12,9 @@ namespace Sales.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("ShoppingCarts");
             builder.HasKey(x => x.Id);
-            builder.OwnsMany(x => x.ShoppingCartItems, y =>
-            {
-                y.ToTable("ShoppingCartItems");
-                y.HasKey(z => z.Id);
-            });
+            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new CustomerId(x));
+
+
         }
     }
 }

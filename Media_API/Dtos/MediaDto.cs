@@ -1,4 +1,4 @@
-﻿namespace Media_API.Dtos
+﻿namespace Media.Api.Dtos
 {
     public class MediaDto
     {

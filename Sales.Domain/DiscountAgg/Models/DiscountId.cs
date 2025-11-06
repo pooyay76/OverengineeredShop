@@ -1,8 +1,8 @@
-﻿using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.DiscountAgg.Models
 {
-    public class DiscountId : StronglyTypedId
+    public record DiscountId : StronglyTypedId
     {
         public DiscountId(Guid value) : base(value)
         {

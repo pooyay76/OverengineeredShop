@@ -1,8 +1,8 @@
-﻿using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.ShoppingCartAgg.Models
 {
-    public class ShoppingCartItemId : StronglyTypedId
+    public record ShoppingCartItemId : StronglyTypedId
     {
         public ShoppingCartItemId(Guid value) : base(value)
         {

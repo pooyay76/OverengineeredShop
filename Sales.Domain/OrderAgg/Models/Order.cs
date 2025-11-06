@@ -1,7 +1,7 @@
-﻿using Sales.Domain._common;
-using Sales.Domain._common.Base;
-using Sales.Domain._common.ValueObjects;
-using Sales.Domain.BillAgg.Models;
+﻿using Sales.Domain.BillAgg.Models;
+using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
+using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.OrderAgg.Events;
 
 namespace Sales.Domain.OrderAgg.Models

@@ -1,4 +1,4 @@
-﻿namespace Media_API.Models
+﻿namespace Media.Api.Models
 {
     public enum MediaExtension
     {

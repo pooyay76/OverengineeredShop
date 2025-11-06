@@ -1,4 +1,7 @@
-﻿namespace Media_API.Services
+﻿using Media.Api.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
+
+namespace Media.Api.Services
 {
     public class FileService : IFileService
     {
@@ -33,6 +36,24 @@
                 await file.CopyToAsync(fileStream);
             }
             return Path.Combine(subFolder, newFileName); ;
+        }
+        public async Task<string> SaveFileAsync(string fileType, byte[] data, string subFolder)
+        {
+            if (data == null || data.Length == 0)
+            {
+                throw new ArgumentNullException("No file uploaded.");
+            }
+            MediaExtension extension = Enum.Parse<MediaExtension>(fileType.ToLower());
+            string path = Path.Combine(webHostEnvironment.WebRootPath, subFolder);
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            var newFileName = $"{Guid.NewGuid()}.{extension}";
+            // Generate a unique filename to avoid conflicts
+            var filePath = Path.Combine(path, newFileName);
+
+            await File.WriteAllBytesAsync(filePath, data);
+            return Path.Combine(subFolder, newFileName); 
         }
     }
 }

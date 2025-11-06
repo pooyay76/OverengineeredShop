@@ -1,10 +1,10 @@
-
-using Media_API.Data;
-using Media_API.Services;
+using Media.Api.Data;
+using Media.Api.External.Server;
+using Media.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
-namespace Media_API
+namespace Media.Api
 {
     public class Program
     {
@@ -16,6 +16,7 @@ namespace Media_API
                 ContentRootPath = Directory.GetCurrentDirectory(),
                 WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "Medias")
             });
+            string connectionString = builder.Configuration.GetConnectionString("Default");
 
             // Add services to the container.
 
@@ -24,8 +25,11 @@ namespace Media_API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddTransient<IFileService, FileService>();
-            string connectionString = builder.Configuration.GetConnectionString("Default");
-            builder.Services.AddDbContext<MediaDbContext>(x => x.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<MediaDbContext>(x => x.UseNpgsql(connectionString));
+            builder.Services.AddGrpc();
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -42,7 +46,7 @@ namespace Media_API
                 RequestPath = "/Medias"
             });
             app.UseAuthorization();
-
+            app.MapGrpcService<MediaExternalServices>();
 
             app.MapControllers();
 

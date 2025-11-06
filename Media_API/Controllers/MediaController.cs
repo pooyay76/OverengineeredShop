@@ -1,12 +1,12 @@
-using Media_API.Contracts;
-using Media_API.Data;
-using Media_API.Dtos;
-using Media_API.Models;
-using Media_API.Services;
+using Media.Api.Contracts;
+using Media.Api.Data;
+using Media.Api.Models;
+using Media.Api.Dtos;
+using Media.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Media_API.Controllers;
+namespace Media.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -65,8 +65,8 @@ public class MediaController : ControllerBase
         var fileBytes = await System.IO.File.ReadAllBytesAsync(path); // or File.OpenRead(media.FilePath)
         var fileName = Path.GetFileName(media.Path);
         // Return the file with its MIME type
-        var fileExtension = Path.GetExtension(fileName).ToLowerInvariant();
-        var mimeType = GetMimeType(fileExtension); // You can use a helper method to determine MIME type
+        string fileExtension = Path.GetExtension(fileName);
+        var mimeType = GetMimeType(fileExtension.ToLowerInvariant()); // You can use a helper method to determine MIME type
 
         return File(fileBytes, mimeType, fileName);
     }
@@ -75,7 +75,7 @@ public class MediaController : ControllerBase
     public async Task<IActionResult> UploadAsync([FromForm] UploadMediaCommand command)
     {
         var path = await fileService.SaveFileAsync(command.File, command.Section);
-        var media = new Media
+        var media = new MediaEntity
         {
             Path = path,
             Extension = Path.GetExtension(path),

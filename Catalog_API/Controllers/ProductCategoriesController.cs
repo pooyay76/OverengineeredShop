@@ -1,15 +1,15 @@
-﻿using Catalog_API.Contracts.Commands;
-using Catalog_API.Contracts.Queries;
-using Catalog_API.Data;
-using Catalog_API.Models;
+﻿using Catalog.Api.Commands;
+using Catalog.Api.Data;
+using Catalog.Api.Models;
+using Catalog.Api.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalog_API.Controllers
+namespace Catalog.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ProductCategoriesController : Controller
+    public class ProductCategoriesController : ControllerBase
     {
         private readonly CatalogContext catalogContext;
 

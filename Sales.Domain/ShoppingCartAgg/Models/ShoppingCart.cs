@@ -1,13 +1,13 @@
-﻿using Sales.Domain._common;
-using Sales.Domain._common.Base;
+﻿using Sales.Domain.Common;
+using Sales.Domain.Common.Base;
 
 namespace Sales.Domain.ShoppingCartAgg.Models
 {
     public class ShoppingCart : AggregateRoot<CustomerId>
     {
-        public List<ShoppingCartItem> ShoppingCartItems { get; set; } = [];
-
-        public ShoppingCart(CustomerId customerId)
+        internal List<ShoppingCartItem> _shoppingCartItems { get; set; } = [];
+        public IReadOnlyList<ShoppingCartItem> ShoppingCartItems => _shoppingCartItems.AsReadOnly();
+        internal ShoppingCart(CustomerId customerId)
         {
             //Shopping cart's id is equal to customer id
             Id = customerId;
@@ -17,34 +17,30 @@ namespace Sales.Domain.ShoppingCartAgg.Models
 
         }
 
-        public void AddItem(ProductItemId productItemId, int quantity)
+        internal void AddItem(ShoppingCartItem item)
         {
-            var item = ShoppingCartItems.FirstOrDefault(x => x.ProductItemId == productItemId);
+            var currentItem = _shoppingCartItems.FirstOrDefault(x => x.ProductItemId == item.ProductItemId);
 
-            if (item != null)
+            if (currentItem != null)
             {
-                item.Quantity += quantity;
+                currentItem.Quantity += item.Quantity;
             }
             else
             {
-                ShoppingCartItems.Add(new ShoppingCartItem()
-                {
-                    ProductItemId = productItemId,
-                    Quantity = quantity
-                });
+                _shoppingCartItems.Add(item);
             }
 
         }
-        public void DecrementItemQuantity(ProductItemId productItemId, int quantity)
+        internal void DecrementItemQuantity(ProductItemId productItemId, int quantity)
         {
-            var item = ShoppingCartItems.FirstOrDefault(x => x.ProductItemId == productItemId);
+            var item = _shoppingCartItems.FirstOrDefault(x => x.ProductItemId == productItemId);
 
             if (item == null)
                 return;
 
             if (item.Quantity <= quantity)
             {
-                ShoppingCartItems.Remove(item);
+                _shoppingCartItems.Remove(item);
             }
             else
             {
@@ -52,9 +48,9 @@ namespace Sales.Domain.ShoppingCartAgg.Models
             }
 
         }
-        public void ClearItems(List<ProductItemId> productItemIds)
+        internal void ClearItems(List<ProductItemId> productItemIds)
         {
-            ShoppingCartItems.RemoveAll(x => productItemIds.Contains(x.ProductItemId));
+            _shoppingCartItems.RemoveAll(x => productItemIds.Contains(x.ProductItemId));
         }
     }
 }
