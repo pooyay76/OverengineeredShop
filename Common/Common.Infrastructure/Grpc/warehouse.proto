@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "Common.Infrastructure.Grpc";
+
+package warehouse;
+
+service WarehouseServices{
+	rpc GetAvailableProductItems(GetAvailableProductItemsRequest) returns (GetAvailableProductItemsResponse);
+}
+
+message GetAvailableProductItemsRequest{
+	repeated string ids = 1;
+}
+
+
+message GetAvailableProductItemsResponse {
+  repeated string ids = 1;
+}

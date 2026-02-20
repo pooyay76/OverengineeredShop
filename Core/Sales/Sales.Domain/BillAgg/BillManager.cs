@@ -1,8 +1,9 @@
-﻿using Sales.Domain.BillAgg.Contracts;
+﻿using Common.Domain.Language.Enums;
+using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
+using Sales.Domain.BillAgg.Contracts;
 using Sales.Domain.BillAgg.Exceptions;
 using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
-using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Contracts;
 using Sales.Domain.DiscountAgg.Models;
 using Sales.Domain.PriceLabelAgg.Contracts;
@@ -31,7 +32,7 @@ namespace Sales.Domain.BillAgg
             //this.shippingService = shippingService;
             this.billRepository = billRepository;
         }
-        public async Task<Bill> CreateAsync(CustomerId customerId, CustomerType userRole, ShippingInformation receiverInformation)
+        public async Task<Bill> CreateAsync(UserId customerId, UserType userRole, ShippingInformation receiverInformation)
         {
             var cart = await shoppingCartRepository.GetOrThrowAsync(x => x.Id == customerId);
 
@@ -63,8 +64,8 @@ namespace Sales.Domain.BillAgg
             List<Discount> activeDiscounts = await discountRepository.GetActiveDiscountsAsync();
 
 
-            DiscountTargetType targetType = userRole == CustomerType.Normal ? DiscountTargetType.Everyone :
-                userRole == CustomerType.Admin ? DiscountTargetType.Admin : DiscountTargetType.Colleague;
+            DiscountTargetType targetType = userRole == UserType.Normal ? DiscountTargetType.Everyone :
+                userRole == UserType.Admin ? DiscountTargetType.Admin : DiscountTargetType.Colleague;
 
             List<Discount> userDiscounts = activeDiscounts.Where(x => x.TargetType == targetType ||
             x.TargetType == DiscountTargetType.Everyone).ToList();

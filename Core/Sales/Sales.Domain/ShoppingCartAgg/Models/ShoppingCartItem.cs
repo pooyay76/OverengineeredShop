@@ -1,8 +1,9 @@
-﻿using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Catalog.ValueObjects;
+using Common.Domain.Language.Global.ValueObjects;
 using Sales.Domain.ShoppingCartAgg.Models;
 
-public class ShoppingCartItem : Entity<CustomerId>
+public class ShoppingCartItem : EntityBase<UserId>
 {
     public ShoppingCart ShoppingCart { get; set; }
     public ProductItemId ProductItemId { get; set; }

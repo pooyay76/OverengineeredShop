@@ -1,6 +1,6 @@
-﻿using Warehouse.Domain.Common.ValueObjects;
+﻿using Common.Domain.Language.Global.ValueObjects;
 
-namespace Warehouse.Domain.Contracts
+namespace Inventory.Domain.Contracts
 {
     public interface IUserServices
     {

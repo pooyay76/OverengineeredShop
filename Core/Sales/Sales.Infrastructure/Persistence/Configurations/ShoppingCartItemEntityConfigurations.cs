@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain.Catalog.ValueObjects;
+using Common.Domain.Global.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sales.Domain.Common;
 
 namespace Sales.Infrastructure.Persistence.Configurations
 {
@@ -11,7 +12,7 @@ namespace Sales.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("ShoppingCartItems");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new CustomerId(x));
+            builder.Property(x => x.Id).HasConversion(x => x.Value, x => new UserId(x));
             builder.Property(x => x.ProductItemId).HasConversion(x => x.Value, x => new ProductItemId(x));
 
         }

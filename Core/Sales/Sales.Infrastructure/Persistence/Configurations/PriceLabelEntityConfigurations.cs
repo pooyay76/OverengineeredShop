@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain.Catalog.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sales.Domain.Common;
 using Sales.Domain.PriceLabelAgg.Models;
 namespace Sales.Infrastructure.Persistence.Configurations
 {

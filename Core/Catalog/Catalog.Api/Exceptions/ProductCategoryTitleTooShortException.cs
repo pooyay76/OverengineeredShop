@@ -2,7 +2,7 @@
 {
     public class ProductCategoryTitleTooShortException : ExceptionBase
     {
-        private static readonly string DefaultMessage = "Product category name cannot be less than 2 characters";
+        public static readonly string DefaultMessage = "Product category name cannot be less than 2 characters";
         public ProductCategoryTitleTooShortException() : base(DefaultMessage)
         {
         }

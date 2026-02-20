@@ -1,8 +1,10 @@
-﻿namespace Catalog.Api.Commands
+﻿using Common.Domain.Language.Catalog.ValueObjects;
+
+namespace Catalog.Api.Commands
 {
     public class AssignProductToProductCategoryCommand
     {
-        public long ProductId { get; set; }
-        public long ProductCategoryId { get; set; }
+        public ProductId ProductId { get; set; }
+        public ProductCategoryId ProductCategoryId { get; set; }
     }
 }

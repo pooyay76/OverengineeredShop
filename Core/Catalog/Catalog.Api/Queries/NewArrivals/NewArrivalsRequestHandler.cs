@@ -23,11 +23,11 @@ namespace Catalog.Api.Queries.NewArrivals
             var totalCount = catalogContext.Products.Where(x => x.IsPublished == false).Count();
             var productData =await catalogContext.Products.Where(x => x.IsPublished == false).OrderByDescending(x => x.PublishedAt)
               .Skip(skipItems).Take(pageSize)
-              .Include(x => x.Items).Select(x=>new NewArrivalsProductDto
+              .Include(x => x.ProductItems).Select(x=>new NewArrivalsProductDto
               {
                   ProductId = x.Id,
                   ProductName = x.Name,
-                  ProductPrice = x.IsPublished? x.Items.Min(x=>x.Price.Amount).ToString():"",
+                  ProductPrice = x.IsPublished? x.ProductItems.Min(x=>x.Price.Amount).ToString():"",
                   ProductThumbnailUrl = x.PictureMediaAddress
               })
               .ToListAsync(cancellationToken);

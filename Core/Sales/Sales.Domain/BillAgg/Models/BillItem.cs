@@ -1,13 +1,14 @@
 ﻿#nullable enable
+using Common.Domain.Base;
+using Common.Domain.Language.Catalog.ValueObjects;
+using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
 using Sales.Domain.BillAgg.Exceptions;
-using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
-using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Domain.BillAgg.Models
 {
-    public class BillItem : Entity<BillItemId>
+    public class BillItem : EntityBase<BillItemId>
     {
         public BillId BillId { get; private set; } = null!;
         public Bill Bill { get; private set; } = null!;

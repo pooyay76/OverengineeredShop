@@ -1,17 +1,19 @@
-﻿using MediatR;
+﻿using Common.Application;
+using Common.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Sales.Application.ShoppingCartUseCases.Commands;
 using Sales.Application.ShoppingCartUseCases.Queries;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Sales.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("sales/[controller]")]
     public class ShoppingCartController : ControllerBase
     {
-        private readonly IMediator mediator;
+        private readonly Mediator mediator;
 
-        public ShoppingCartController(IMediator mediator)
+        public ShoppingCartController(Mediator mediator)
         {
             this.mediator = mediator;
         }
@@ -21,13 +23,9 @@ namespace Sales.Api.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateAsync(UpdateShoppingCartCommand command)
         {
-            return Ok(await mediator.Send(command));
+            return Ok(await mediator.SendAsync<ApplicationResponse>(command));
         }
-        [HttpGet("get/{userId}")]
-        public async Task<IActionResult> GetCurrentCartAsync(GetCustomerShoppingCartQuery request)
-        {
-            return Ok(await mediator.Send(request));
-        }
+
         //Get DecrementItemQuantity(long userId,long itemId)
         //Get RemoveItem(long userId,long itemId)
 

@@ -6,12 +6,10 @@ namespace Catalog.Api.Middlewares
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate next;
-        private readonly IWebHostEnvironment env;
 
-        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env)
+        public ExceptionMiddleware(RequestDelegate next)
         {
             this.next = next;
-            this.env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)

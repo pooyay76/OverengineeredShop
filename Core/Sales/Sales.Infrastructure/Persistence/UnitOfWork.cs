@@ -1,9 +1,8 @@
-﻿using MediatR;
-using Sales.Application.Contracts;
+﻿using Common.Application.Contracts;
 
 namespace Sales.Infrastructure.Persistence
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IFrameworkUnitOfWork
     {
         private readonly SalesDbContext salesDbContext;
 
@@ -12,7 +11,7 @@ namespace Sales.Infrastructure.Persistence
             this.salesDbContext = salesDbContext;
         }
 
-        public async Task CommitTransactions()
+        public async Task CommitAsync()
         {
 
             await salesDbContext.SaveChangesAsync();

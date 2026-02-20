@@ -1,0 +1,28 @@
+@Gateway.Api_HostAddress = https://localhost:8443
+@phoneNumber=22321312
+@mypassword=testUserPass123
+
+POST {{Gateway.Api_HostAddress}}/auth/user/register 
+Content-Type: application/json 
+
+{ 
+  "phoneNumber":"{{phoneNumber}}",
+  "password": "{{mypassword}}",
+  "fName": "TestFName",
+  "lName": "TestLName"
+} 
+###
+POST {{Gateway.Api_HostAddress}}/auth/user/login 
+Content-Type: application/json 
+
+{ 
+  "phoneNumber":"{{phoneNumber}}",
+  "password": "{{mypassword}}"
+} 
+###
+@token=eyJhbGciOiJSUzI1NiIsInR5cCI6ImF0K2p3dCJ9.eyJVc2VySWQiOiIwMTljNzY2Ni02ZGQwLTc1MDYtOGQ0Zi1mNjQ0ZGMyYTFhMTQiLCJuYmYiOjE3NzE1MTMwMTEsImV4cCI6MTc3MTUxMzkxMSwiaWF0IjoxNzcxNTEzMDExLCJpc3MiOiJTaG9wQXV0aEFwaSIsImF1ZCI6IlNob3BHYXRld2F5QXBpIn0.IQiVX1glf3i5psIkGmWrs2SG1--fHI0d-gdo7W3083rjrwWLkSlp5b3GwlTCz8AqRg2T66x7wjmXFzgdicdwL-0MV8K3BTF5F7JYbbhHH-8Giekai-DolqMh-y1wy1wgbtFMxhsqghZIhV_wPetJUhkDmbwek1LU2dAG0xjVQLQoAiubF5XLsjq_ahnKgg8HHFVtw-a3uVFVVAclhqCPgzUZDK3v7uixRyUKoPc4I-2MwgjQx6Ub7ysZfzzDbleg6Da5PS6w7NZQf7_d925HSImCWNWMgviztJqS8O8tEyR-3aoCFThLh74ZUzbG3crsIyIXAm4WUXoo9NnBp7X3iQ
+
+GET {{Gateway.Api_HostAddress}}/auth/user/get
+Authorization:Bearer {{token}}
+Accept: application/json
+

@@ -1,15 +1,13 @@
-﻿using MediatR;
-using Sales.Application.DTOs;
-using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
-using Sales.Domain.Common.ValueObjects;
+﻿using Common.Application.Base;
+using Common.Domain.Language.Enums;
+using Common.Domain.Language.Global.ValueObjects;
 
 namespace Sales.Application.BillUseCases.Commands
 {
-    public class CreateBillCommand : IRequest<CommandResponseGeneric<Bill>>
+    public class CreateBillCommand : CommandBase
     {
         public ShippingInformation ShippingInformation { get; set; }
-        public CustomerType CustomerType { get; set; }
-        public CustomerId CustomerId { get; set; }
+        public UserType CustomerType { get; set; }
+        public UserId CustomerId { get; set; }
     }
 }

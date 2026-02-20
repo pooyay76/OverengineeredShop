@@ -1,8 +1,7 @@
-﻿using Sales.Domain.Common.Base;
-
+﻿
 namespace Sales.Domain.BillAgg.Exceptions
 {
-    public class AShoppingCartItemIsUnavailableException : DomainException
+    public class AShoppingCartItemIsUnavailableException : Exception
     {
         private const string _message = "";
         public AShoppingCartItemIsUnavailableException() : base(_message)

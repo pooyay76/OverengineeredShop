@@ -15,9 +15,8 @@
 
   <ItemGroup>
     <Folder Include="Contracts\ShoppingCartContracts\Interfaces\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Options\" />
-    <Folder Include="ServiceSetupConfig\" />
+    <Folder Include="Responses\" />
+    <Folder Include="Requests\" />
   </ItemGroup>
 
   <ItemGroup>

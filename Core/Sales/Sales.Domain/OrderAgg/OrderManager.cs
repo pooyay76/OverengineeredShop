@@ -1,7 +1,7 @@
-﻿using Sales.Domain.BillAgg.Contracts;
+﻿using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
+using Sales.Domain.BillAgg.Contracts;
 using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
-using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.OrderAgg.Exceptions;
 using Sales.Domain.OrderAgg.Models;
 
@@ -16,7 +16,7 @@ namespace Sales.Domain.OrderAgg
             this.billRepository = billRepository;
         }
 
-        public async Task<Order> CreateOrderAsync(BillId billId, CustomerId customerId)
+        public async Task<Order> CreateOrderAsync(BillId billId, UserId customerId)
         {
             Bill bill = await billRepository.GetActiveAsync(x => x.Id == billId && x.CustomerId == customerId);
             if (bill == null)

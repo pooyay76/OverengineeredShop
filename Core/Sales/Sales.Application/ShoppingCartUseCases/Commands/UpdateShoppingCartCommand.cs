@@ -1,43 +1,42 @@
-﻿using MediatR;
-using Sales.Application.Contracts;
-using Sales.Application.DTOs;
-using Sales.Domain.Common;
-using Sales.Domain.Common.ValueObjects;
+﻿using Common.Application.Base;
+using Common.Application.Contracts;
+using Common.Application.DTOs;
+using Common.Domain.Language.Global.ValueObjects;
 using Sales.Domain.ShoppingCartAgg;
 using Sales.Domain.ShoppingCartAgg.Contracts;
 
 namespace Sales.Application.ShoppingCartUseCases.Commands
 {
-    public class UpdateShoppingCartCommand : IRequest<CommandResponse>
+    public class UpdateShoppingCartCommand : CommandBase
     {
-        public CustomerId CustomerId { get; set; }
+        public UserId CustomerId { get; set; }
         public List<ProductItemQuantity> CartItems { get; set; }
 
     }
-    public class UpdateShoppingCartCommandHandler : IRequestHandler<UpdateShoppingCartCommand, CommandResponse>
+    public class UpdateShoppingCartCommandHandler : CommandHandlerBase<UpdateShoppingCartCommand, ApplicationResponse>
     {
         private readonly IShoppingCartRepository shoppingCartRepository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IFrameworkUnitOfWork unitOfWork;
         private readonly ShoppingCartManager shoppingCartManager;
-        public UpdateShoppingCartCommandHandler(IShoppingCartRepository shoppingCartRepository, IUnitOfWork unitOfWork, ShoppingCartManager shoppingCartManager)
+        public UpdateShoppingCartCommandHandler(IShoppingCartRepository shoppingCartRepository, IFrameworkUnitOfWork unitOfWork, ShoppingCartManager shoppingCartManager)
         {
             this.shoppingCartRepository = shoppingCartRepository;
             this.unitOfWork = unitOfWork;
             this.shoppingCartManager = shoppingCartManager;
         }
 
-        public async Task<CommandResponse> Handle(UpdateShoppingCartCommand request, CancellationToken cancellationToken)
+
+        public override async Task<ApplicationResponse> HandleAsync(UpdateShoppingCartCommand request)
         {
-            CommandResponse resp = new();
+            ApplicationResponse resp = new();
             var cart = await shoppingCartManager.CreateOrGetCustomerCartAsync(request.CustomerId);
-            foreach(var item in request.CartItems)
+            foreach (var item in request.CartItems)
             {
                 await shoppingCartManager.UpdateCartItemAsync(cart, item);
             }
             await shoppingCartRepository.UpdateAsync(cart);
-            await unitOfWork.CommitTransactions();
+            await unitOfWork.CommitAsync();
             return resp.Succeeded();
-
         }
     }
 

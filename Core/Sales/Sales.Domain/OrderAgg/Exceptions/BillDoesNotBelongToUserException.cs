@@ -1,8 +1,6 @@
-﻿using Sales.Domain.Common.Base;
-
-namespace Sales.Domain.OrderAgg.Exceptions
+﻿namespace Sales.Domain.OrderAgg.Exceptions
 {
-    public class BillDoesNotBelongToUserException : DomainException
+    public class BillDoesNotBelongToUserException : Exception
     {
         private const string _message = "";
         public BillDoesNotBelongToUserException() : base(_message)

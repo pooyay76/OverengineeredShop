@@ -1,9 +1,9 @@
-﻿using Sales.Domain.Common.Base;
-using Sales.Domain.PaymentSessionAgg.Models;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Sales.ValueObjects;
 
 namespace Sales.Domain.PaymentSessionAgg.Events
 {
-    public class PaymentSessionFailedEvent : IDomainEvent
+    public record PaymentSessionFailedEvent : EventBase
     {
         public PaymentSessionId SessionId { get; init; }
 

@@ -1,4 +1,5 @@
-﻿using Sales.Domain.DiscountAgg.Models;
+﻿using Common.Domain.Language.Sales.ValueObjects;
+using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Domain.DiscountAgg.Contracts
 {

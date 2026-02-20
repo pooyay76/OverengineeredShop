@@ -1,19 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain.Language.Global.ValueObjects;
+using Common.Infrastructure.Persistence.Interceptors;
+using Microsoft.EntityFrameworkCore;
 using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Models;
 using Sales.Domain.OrderAgg.Models;
 using Sales.Domain.PaymentSessionAgg.Models;
 using Sales.Domain.PriceLabelAgg.Models;
 using Sales.Domain.ShoppingCartAgg.Models;
 using Sales.Infrastructure.Persistence.Configurations;
-using Sales.Infrastructure.Persistence.Interceptors;
 
 namespace Sales.Infrastructure.Persistence
 {
     public class SalesDbContext : DbContext
     {
-        private static readonly DomainEventInterceptor domainEventInterceptor;
+        private readonly EventPublisherInterceptor domainEventInterceptor;
         public SalesDbContext(DbContextOptions options) : base(options)
         {
         }

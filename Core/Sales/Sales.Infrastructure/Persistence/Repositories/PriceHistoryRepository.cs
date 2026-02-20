@@ -14,7 +14,7 @@ namespace Sales.Infrastructure.Persistence.Repositories
             this.salesDbContext = salesDbContext;
         }
 
-        public Task<PriceLabel> Add(PriceLabel entity)
+        public Task<PriceLabel> AddAsync(PriceLabel entity)
         {
             throw new NotImplementedException();
         }

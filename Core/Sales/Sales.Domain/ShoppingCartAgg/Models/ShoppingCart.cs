@@ -1,13 +1,14 @@
-﻿using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Catalog.ValueObjects;
+using Common.Domain.Language.Global.ValueObjects;
 
 namespace Sales.Domain.ShoppingCartAgg.Models
 {
-    public class ShoppingCart : AggregateRoot<CustomerId>
+    public class ShoppingCart : AggregateRootBase<UserId>
     {
         internal List<ShoppingCartItem> _shoppingCartItems { get; set; } = [];
         public IReadOnlyList<ShoppingCartItem> ShoppingCartItems => _shoppingCartItems.AsReadOnly();
-        internal ShoppingCart(CustomerId customerId)
+        internal ShoppingCart(UserId customerId)
         {
             //Shopping cart's id is equal to customer id
             Id = customerId;

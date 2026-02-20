@@ -9,7 +9,7 @@ service CatalogServices{
 }
 
 message ProductExistsRequest{
-	int64 id = 1;
+	string id = 1;
 }
 
 message ProductExistsResponse{

@@ -1,4 +1,4 @@
-﻿using Auth.Api.Utility;
+﻿using Auth.Api.Infrastructure;
 
 namespace Auth.Api.Models
 {

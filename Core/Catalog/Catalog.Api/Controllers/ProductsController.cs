@@ -1,5 +1,5 @@
 using Catalog.Api.Commands;
-using Catalog.Api.Contracts.Interfaces;
+using Catalog.Api.Contracts;
 using Catalog.Api.Data;
 using Catalog.Api.Models;
 using Catalog.Api.Queries;
@@ -15,26 +15,49 @@ public class ProductsController : ControllerBase
     private readonly CatalogContext catalogContext;
     private readonly IMediaClient mediaClientExternalServices;
     private readonly IConfiguration configuration;
-    public ProductsController(CatalogContext catalogContext, IMediaClient mediaClientExternalServices, IConfiguration configuration)
+    private readonly HttpContext httpContext;
+    public ProductsController(CatalogContext catalogContext, IMediaClient mediaClientExternalServices, IConfiguration configuration, HttpContext httpContext)
     {
         this.catalogContext = catalogContext;
         this.mediaClientExternalServices = mediaClientExternalServices;
         this.configuration = configuration;
+        this.httpContext = httpContext;
     }
 
     [HttpPost("create", Name = "CreateProduct")]
-    public async Task<IActionResult> CreateAsync([FromForm]CreateProductCommand command)
+    public async Task<IActionResult> Create([FromForm]CreateProductCommand command)
     {
         var fileExtension = Path.GetExtension(command.ProductPicture.FileName).TrimStart('.');
         using var fileStream = command.ProductPicture.OpenReadStream();
-        byte[] fileData = new byte[fileStream.Length];
-        fileStream.Read(fileData, 0, fileData.Length);
+        using var memory = new MemoryStream();
+        byte[] fileData;
+        fileStream.CopyTo(memory);
+        fileData= memory.ToArray();
         var result = await mediaClientExternalServices.UploadMediaAsync(fileExtension, fileData);
         
         Product product = new(command.Name, command.Description,result.MediaPath);
-        catalogContext.Products.Add(product);
-        catalogContext.SaveChanges();
+
+        await catalogContext.Products.AddAsync(product);
+        await catalogContext.SaveChangesAsync();
         return Ok(product.Id);
+    }
+
+    [HttpPut("edit", Name = "EditProduct")]
+    public async Task<IActionResult> EditProductAsync(EditProductCommand command)
+    {
+
+        Product product = catalogContext.Products.Find(command.Id);
+
+        if (product == null)
+            throw new KeyNotFoundException();
+
+
+        product.Edit(command.Name, command.Description,command.PictureMediaAddress);
+
+
+        catalogContext.Products.Update(product);
+        await catalogContext.SaveChangesAsync();
+        return Ok();
 
     }
 
@@ -49,13 +72,14 @@ public class ProductsController : ControllerBase
         product.AssignToProductCategory(command.ProductCategoryId);
         catalogContext.SaveChanges();
         return Ok();
+
     }
 
 
     [HttpGet("{id}", Name = "GetById")]
     public ActionResult<ProductDTO> GetById(long id)
     {
-
+        if(httpContext.+)
         Product product = catalogContext.Products.Find(id);
         if (product == null)
             throw new KeyNotFoundException();
@@ -68,30 +92,14 @@ public class ProductsController : ControllerBase
 
     }
 
-    [HttpPut("edit", Name = "EditProduct")]
-    public IActionResult EditProduct(EditProductCommand command)
-    {
-
-
-        Product product = catalogContext.Products.Find(command.Id);
-        if (product == null)
-            throw new KeyNotFoundException();
-        product.Edit(command.Name, command.Description);
-
-        catalogContext.Products.Update(product);
-        catalogContext.SaveChanges();
-        return Ok();
-
-    }
-
-
 
     [HttpGet("getAll", Name = "GetProducts")]
     public async Task<ActionResult<List<ProductDTO>>> GetProductsAsync()
     {
+
         var mediaHostUrl = configuration.GetSection("External")["MediaHost"];
 
-        return Ok(await catalogContext.Products.Include(x=>x.Items)
+        return Ok(await catalogContext.Products.Include(x=>x.ProductItems)
             .Select(x => new ProductDTO
             {
                 Id = x.Id,
@@ -100,8 +108,10 @@ public class ProductsController : ControllerBase
                 IsPublished = x.IsPublished,
                 CategoryId = x.CategoryId,
                 PictureUrl = $"{mediaHostUrl}/Medias/{x.PictureMediaAddress}",
-                Price = x.IsPublished ? x.Items.Min(y => y.Price.Amount).ToString() : ""
+                Price = x.IsPublished ? x.ProductItems.Min(y => y.Price.Amount).ToString() : "",
+                ItemsCount = x.ProductItemsCount
             }).ToListAsync());
+
 
     }
 }

@@ -1,9 +1,10 @@
-﻿using Sales.Domain.Common.Base;
-using Sales.Domain.Common.ValueObjects;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
 using Sales.Domain.PaymentSessionAgg.Events;
 namespace Sales.Domain.PaymentSessionAgg.Models
 {
-    public class PaymentSession : AggregateRoot<PaymentSessionId>
+    public class PaymentSession : AggregateRootBase<PaymentSessionId>
     {
 
 
@@ -31,14 +32,14 @@ namespace Sales.Domain.PaymentSessionAgg.Models
             Amount = amount;
             SessionStatus = PaymentTransactionStatus.Open;
 
-            AddDomainEvent(new PaymentSessionInitiatedEvent(Id));
+            AddEvent(new PaymentSessionInitiatedEvent(Id));
             PaymentGatewayUrl = paymentGatewayUrl;
         }
         internal void MarkAsFailed()
         {
             TransactionEndDate = DateTime.UtcNow;
             SessionStatus = PaymentTransactionStatus.Failed;
-            AddDomainEvent(new PaymentSessionFailedEvent(Id));
+            AddEvent(new PaymentSessionFailedEvent(Id));
 
         }
 
@@ -46,14 +47,14 @@ namespace Sales.Domain.PaymentSessionAgg.Models
         {
             TransactionEndDate = DateTime.UtcNow;
             SessionStatus = PaymentTransactionStatus.Successful;
-            AddDomainEvent(new PaymentSessionSucceededEvent(Id));
+            AddEvent(new PaymentSessionSucceededEvent(Id));
 
         }
         internal void MarkAsTimedOut()
         {
             TransactionEndDate = DateTime.UtcNow;
             SessionStatus = PaymentTransactionStatus.TimedOut;
-            AddDomainEvent(new PaymentSessionSucceededEvent(Id));
+            AddEvent(new PaymentSessionSucceededEvent(Id));
 
         }
         private PaymentSession()

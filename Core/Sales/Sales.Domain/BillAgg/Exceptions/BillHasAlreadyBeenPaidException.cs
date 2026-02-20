@@ -1,8 +1,7 @@
-﻿using Sales.Domain.Common.Base;
-
+﻿
 namespace Sales.Domain.BillAgg.Exceptions
 {
-    public class BillHasAlreadyBeenPaidException : DomainException
+    public class BillHasAlreadyBeenPaidException : Exception
     {
         private const string _message = "";
         public BillHasAlreadyBeenPaidException() : base(_message)

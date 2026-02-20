@@ -26,19 +26,18 @@ namespace Catalog.Api.Data.Migrations
 
             modelBuilder.Entity("Catalog.Api.Models.Product", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("CategoryId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -49,6 +48,7 @@ namespace Catalog.Api.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
@@ -56,52 +56,127 @@ namespace Catalog.Api.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<int>("ProductItemsCount")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Api.Models.ProductCategory", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductCategories", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Api.Models.ProductItem", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<Dictionary<string, string>>("ItemFeatures")
                         .HasColumnType("hstore");
 
-                    b.Property<long>("ProductId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductItems");
+                    b.ToTable("ProductItems", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Domain.Models.EventEntity", b =>
+                {
+                    b.Property<Guid>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AggRootId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AggRootType")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("EventData")
+                        .IsRequired()
+                        .HasMaxLength(16384)
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsGlobal")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Events", (string)null);
+                });
+
+            modelBuilder.Entity("Common.Domain.Models.OutboxEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DestinationTopic")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("MessageId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("MessageValue")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Outbox", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Api.Models.Product", b =>
@@ -116,28 +191,24 @@ namespace Catalog.Api.Data.Migrations
             modelBuilder.Entity("Catalog.Api.Models.ProductItem", b =>
                 {
                     b.HasOne("Catalog.Api.Models.Product", "Product")
-                        .WithMany("Items")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("ProductItems")
+                        .HasForeignKey("ProductId");
 
-                    b.OwnsOne("Catalog.Api.Models.ValueObjects.Money", "Price", b1 =>
+                    b.OwnsOne("Catalog.Api.Models.ProductItem.Price#Common.Domain.Language.Global.ValueObjects.Money", "Price", b1 =>
                         {
-                            b1.Property<long>("ProductItemId")
-                                .HasColumnType("bigint");
+                            b1.Property<Guid>("ProductItemId")
+                                .HasColumnType("uuid");
 
                             b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric")
-                                .HasColumnName("Price_Amount");
+                                .HasColumnType("numeric");
 
                             b1.Property<string>("Currency")
                                 .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("Price_Currency");
+                                .HasColumnType("character varying(3)");
 
                             b1.HasKey("ProductItemId");
 
-                            b1.ToTable("ProductItems");
+                            b1.ToTable("ProductItems", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ProductItemId");
@@ -150,7 +221,7 @@ namespace Catalog.Api.Data.Migrations
 
             modelBuilder.Entity("Catalog.Api.Models.Product", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("ProductItems");
                 });
 
             modelBuilder.Entity("Catalog.Api.Models.ProductCategory", b =>

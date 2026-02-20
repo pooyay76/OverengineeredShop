@@ -1,4 +1,5 @@
-﻿using Sales.Domain.DiscountAgg.Contracts;
+﻿using Common.Domain.Language.Sales.ValueObjects;
+using Sales.Domain.DiscountAgg.Contracts;
 using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Infrastructure.Persistence.Repositories

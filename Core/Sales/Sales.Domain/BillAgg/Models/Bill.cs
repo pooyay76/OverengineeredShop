@@ -1,18 +1,19 @@
 ﻿#nullable enable
+using Common.Domain.Base;
+using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.Events;
+using Common.Domain.Language.Sales.Events.Global;
+using Common.Domain.Language.Sales.ValueObjects;
 using Sales.Domain.BillAgg.Constants;
-using Sales.Domain.BillAgg.Events;
 using Sales.Domain.BillAgg.Exceptions;
-using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
-using Sales.Domain.Common.ValueObjects;
 using Sales.Domain.DiscountAgg.Models;
 
 namespace Sales.Domain.BillAgg.Models
 {
-    public class Bill : AggregateRoot<BillId>
+    public class Bill : AggregateRootBase<BillId>
     {
 
-        public CustomerId CustomerId { get; private set; }
+        public UserId CustomerId { get; private set; }
 
         //empty at construction, can be set at any time via method SetSession
         public string PaymentSessionId { get; private set; } = "";
@@ -45,7 +46,7 @@ namespace Sales.Domain.BillAgg.Models
         {
 
         }
-        internal Bill(CustomerId userId, List<BillItem> items, ShippingInformation shippingInformation,
+        internal Bill(UserId userId, List<BillItem> items, ShippingInformation shippingInformation,
            Money shippingCost, Discount? billDiscount = null)
         {
             CustomerId = userId;
@@ -83,7 +84,7 @@ namespace Sales.Domain.BillAgg.Models
 
             BillStatus = BillStatus.AwaitingPayment;
 
-            AddDomainEvent(new BillCreatedEvent(Id));
+            AddEvent(new BillCreatedEvent(Id));
             ShippingInformation = shippingInformation;
         }
         internal void SetSession(string sessionId)
@@ -97,7 +98,7 @@ namespace Sales.Domain.BillAgg.Models
                 throw new SessionIdCannotBeEmptyException();
             }
             PaymentSessionId = sessionId;
-            AddDomainEvent(new BillSessionIdHasBeenSetEvent(Id, sessionId));
+            AddEvent(new BillSessionIdHasBeenSetEvent(Id, sessionId));
         }
         internal void MarkAsPaid()
         {
@@ -107,7 +108,11 @@ namespace Sales.Domain.BillAgg.Models
             }
             BillStatus = BillStatus.Paid;
             PaidAt = DateTime.UtcNow;
-            AddDomainEvent(new BillPaidEvent(CustomerId, Id, BillItems, TotalBilling, PaidAt));
+            AddEvent(new BillPaidEvent(Id,CustomerId, BillItems.Select(x=>new ProductItemQuantity()
+            {
+                ProductItemId = x.ProductItemId,
+                Quantity = x.Quantity
+            }).ToList(),TotalBilling,PaidAt));
         }
         internal void MarkAsFailed()
         {
@@ -119,7 +124,7 @@ namespace Sales.Domain.BillAgg.Models
 
             BillStatus = BillStatus.PaymentFailed;
 
-            AddDomainEvent(new BillPaymentFailedEvent(Id));
+            AddEvent(new BillPaymentFailedEvent(Id));
         }
 
     }

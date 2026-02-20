@@ -1,12 +1,15 @@
-﻿using Sales.Domain.Common.Base;
-using Sales.Domain.OrderAgg.Models;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Sales.ValueObjects;
 
 namespace Sales.Domain.OrderAgg.Events
 {
-    public record OrderDeliveredEvent : DomainEvent<OrderId>
+    public record OrderDeliveredEvent : EventBase
     {
-        public OrderDeliveredEvent(OrderId id) : base(id)
+        public OrderDeliveredEvent(OrderId id)
         {
+            Id = id;
         }
+
+        public OrderId Id { get; private init; }
     }
 }

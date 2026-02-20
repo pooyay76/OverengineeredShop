@@ -1,0 +1,7 @@
+﻿1-integrate features
+2-add YARP √
+3-make yarp validate every json token and add user info to the header √
+4-make all the apis follow the same architecture pattern
+5-make ui
+6-cache auth and catalog
+7-testing

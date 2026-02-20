@@ -1,5 +1,5 @@
 ﻿
-using Catalog.Api.Contracts.Interfaces;
+using Catalog.Api.Contracts;
 
 namespace Catalog.Api.External.Client
 {

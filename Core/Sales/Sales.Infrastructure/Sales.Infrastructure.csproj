@@ -14,11 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
     <ProjectReference Include="..\Sales.Application\Sales.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="External\Events\" />
+    <Folder Include="Persistence\Interceptors\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 

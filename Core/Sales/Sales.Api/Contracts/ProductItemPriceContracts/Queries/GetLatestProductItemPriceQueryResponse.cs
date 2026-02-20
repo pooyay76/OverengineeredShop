@@ -1,5 +1,5 @@
-﻿using Sales.Domain.Common;
-using Sales.Domain.Common.ValueObjects;
+﻿using Common.Domain.Language.Catalog.ValueObjects;
+using Common.Domain.Language.Global.ValueObjects;
 
 namespace Sales.Api.Contracts.ProductItemPriceContracts.Queries
 {

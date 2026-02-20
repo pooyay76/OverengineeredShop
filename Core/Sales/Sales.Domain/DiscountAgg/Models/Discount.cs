@@ -1,9 +1,11 @@
-﻿using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Catalog.ValueObjects;
+using Common.Domain.Language.Enums;
+using Common.Domain.Language.Sales.ValueObjects;
 
 namespace Sales.Domain.DiscountAgg.Models
 {
-    public class Discount : AggregateRoot<DiscountId>
+    public class Discount : AggregateRootBase<DiscountId>
     {
         public int DiscountPercentage { get; private set; }
         public string Description { get; private set; }

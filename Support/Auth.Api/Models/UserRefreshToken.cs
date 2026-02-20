@@ -18,6 +18,9 @@
             ExpirationDateTime = DateTime.UtcNow + TimeSpan.FromMinutes(expirationMinutes);
             IsValid = true;
         }
-
+        private UserRefreshToken()
+        {
+            
+        }
     }
 }

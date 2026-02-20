@@ -6,6 +6,6 @@ namespace Sales.Domain.PriceLabelAgg.Contracts
     public interface IPriceHistoryRepository
     {
         Task<List<PriceLabel>> GetLatestPricesAsync(Expression<Func<PriceLabel, bool>> predicate);
-        Task<PriceLabel> Add(PriceLabel entity);
+        Task<PriceLabel> AddAsync(PriceLabel entity);
     }
 }

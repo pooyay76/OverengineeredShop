@@ -1,9 +1,6 @@
-using Sales.Api.BackgroundServices;
-using Sales.Application.ShoppingCartUseCases.Commands;
 using Sales.Infrastructure;
-using Sales.Infrastructure.Configurations;
 using Sales.Infrastructure.External.Client.Catalog;
-using System.Reflection;
+using Sales.Infrastructure.Options;
 
 namespace Sales.Api
 {
@@ -23,13 +20,15 @@ namespace Sales.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddOptions();
-            builder.Services.AddHostedService<KafkaConsumerHostedService>();
-            builder.Services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(UpdateShoppingCartCommandHandler).Assembly));
+
+
             builder.Services.Configure<ZarinPalOptions>(builder.Configuration.GetSection("ZarinPal"));
+
             builder.Services.AddGrpcClient<CatalogServices.CatalogServicesClient>(x =>
             {
                 x.Address = catalogUri;
             });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

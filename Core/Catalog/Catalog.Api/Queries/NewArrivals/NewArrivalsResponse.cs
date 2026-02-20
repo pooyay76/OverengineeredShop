@@ -1,11 +1,11 @@
-﻿
-using Catalog.Api.Contracts.Abstracts;
+﻿using Common.Application.DTOs;
+using Common.Domain.Language.Catalog.ValueObjects;
 
 namespace Catalog.Api.Queries.NewArrivals
 {
     public class NewArrivalsProductDto
     {
-        public long ProductId { get; set; }
+        public ProductId ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductThumbnailUrl { get; set; }
         public string ProductPrice { get; set; }

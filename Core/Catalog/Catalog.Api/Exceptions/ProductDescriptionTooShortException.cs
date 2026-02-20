@@ -2,7 +2,7 @@
 {
     public class ProductDescriptionTooShortException : ExceptionBase
     {
-        private static readonly string DefaultMessage = "Product description cannot be less than 10 characters";
+        public static readonly string DefaultMessage = "Product description cannot be less than 10 characters";
         public ProductDescriptionTooShortException() : base(DefaultMessage)
         {
         }

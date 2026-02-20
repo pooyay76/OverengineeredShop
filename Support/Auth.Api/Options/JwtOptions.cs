@@ -2,7 +2,8 @@
 {
     public record JwtOptions
     {
-        public string TokenKey { get; set; }
         public int TokenTimeout { get; set; }
+        public string Audience { get; set; }
+        public string Issuer { get; set; }
     }
 }

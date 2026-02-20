@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain.Catalog.ValueObjects;
+using Common.Domain.Global.ValueObjects;
+using Common.Domain.Sales.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
 using Sales.Domain.OrderAgg.Models;
 namespace Sales.Infrastructure.Persistence.Configurations
 {
@@ -14,13 +15,13 @@ namespace Sales.Infrastructure.Persistence.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasConversion(x => x.Value, x => new OrderId(x));
             builder.Property(x => x.BillId).HasConversion(x => x.Value, x => new BillId(x));
-            builder.Property(x => x.CustomerId).HasConversion(x => x.Value, x => new CustomerId(x));
+            builder.Property(x => x.CustomerId).HasConversion(x => x.Value, x => new UserId(x));
 
             builder.Property(x => x.OrderStatus).HasConversion<string>();
 
             builder.OwnsMany(x => x.OrderItems, x =>
             {
-                x.WithOwner(y=>y.Order);
+                x.WithOwner(y => y.Order);
                 x.ToTable("OrderItems");
                 x.Property(y => y.Id).HasConversion(y => y.Value, y => new OrderItemId(y));
                 x.Property(y => y.ProductItemId).HasConversion(y => y.Value, y => new ProductItemId(y));

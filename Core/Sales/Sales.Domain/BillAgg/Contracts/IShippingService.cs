@@ -1,4 +1,4 @@
-﻿using Sales.Domain.Common.ValueObjects;
+﻿using Common.Domain.Language.Global.ValueObjects;
 
 namespace Sales.Domain.BillAgg.Contracts
 {

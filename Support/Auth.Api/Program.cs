@@ -1,12 +1,11 @@
 using Auth.Api.Contracts;
-using Auth.Api.Data;
+using Auth.Api.Infrastructure.Data;
+using Auth.Api.Infrastructure.Dev;
 using Auth.Api.Options;
 using Auth.Api.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace Auth.Api
 {
@@ -14,83 +13,65 @@ namespace Auth.Api
     {
         public static void Main(string[] args)
         {
+           
             var builder = WebApplication.CreateBuilder(args);
+            builder.WebHost.ConfigureKestrel(options => { });
 
-            var connectionString = builder.Configuration.GetConnectionString("default");
+
+
+
+
+            #region Jwt
+
+            //assign private key, from file in development, environment variable in production
+            string keyPem;
+            if (builder.Environment.IsDevelopment())
+            {
+                var filePath = Path.Combine("Infrastructure", "Dev", "private.pem");
+
+                if(File.Exists(filePath)==false)
+                    KeyFileGenerator.Generate();
+
+                keyPem = File.ReadAllText(filePath);
+            }
+            else
+            {
+                    keyPem = Environment.GetEnvironmentVariable("JwtPrivateKey") ?? throw new ArgumentException(
+                        "Security key must be assigned in environment variables for production environment");
+            }
+
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(keyPem);
+            RsaSecurityKey rsaKey = new(rsa);
+            SigningCredentials creds = new(rsaKey, SecurityAlgorithms.RsaSha256);
+            builder.Services.AddSingleton<SigningCredentials>(creds);
+            builder.Services.AddScoped<IPermissionService, PermissionService>();
+            #endregion
+
+
+
+            var connectionString = builder.Configuration.GetConnectionString("Default");
+
+
             // Add services to the container.
             builder.Services.AddOptions();
-            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Configs"));
-            builder.Services.AddDbContext<AuthContext>(x => x.UseSqlServer(connectionString));
-            builder.Services.AddScoped<IPermissionService, PermissionService>();
-
-            //JWT
-            var jwtOptions = builder.Configuration.GetSection("Configs").Get<JwtOptions>();
-            builder.Services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ClockSkew = TimeSpan.FromMinutes(jwtOptions.TokenTimeout),
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.TokenKey)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-
-
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+            builder.Services.AddDbContext<AuthContext>(x => x.UseNpgsql(connectionString));
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
-                    },
-                    Scheme = "Bearer",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id="Bearer"
-                            }
-                        },new string[]{ }
-                    }
-                });
-            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+
+            using (var scope = app.Services.CreateScope())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var authContext =scope.ServiceProvider.GetRequiredService<AuthContext>();
+                authContext.Database.Migrate();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
+            if (builder.Environment.IsProduction())
+                app.UseHttpsRedirection();
 
             app.MapControllers();
 

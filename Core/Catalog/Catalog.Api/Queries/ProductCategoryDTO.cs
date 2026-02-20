@@ -1,8 +1,10 @@
-﻿namespace Catalog.Api.Queries
+﻿using Common.Domain.Language.Catalog.ValueObjects;
+
+namespace Catalog.Api.Queries
 {
     public class ProductCategoryDTO
     {
-        public long Id { get; set; }
+        public ProductCategoryId Id { get; set; }
         public string Title { get; set; }
         public int ProductsCount { get; set; }
     }

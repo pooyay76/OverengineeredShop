@@ -1,5 +1,5 @@
 ﻿using Auth.Api.Contracts;
-using Auth.Api.Data;
+using Auth.Api.Infrastructure.Data;
 
 namespace Auth.Api.Services
 {

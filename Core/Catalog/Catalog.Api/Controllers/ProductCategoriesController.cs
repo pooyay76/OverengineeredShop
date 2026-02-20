@@ -19,14 +19,13 @@ namespace Catalog.Api.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult Create(CreateProductCategoryCommand command)
+        public async Task<IActionResult> CreateAsync(CreateProductCategoryCommand command)
         {
             try
             {
-
                 ProductCategory category = new(command.Title);
-                catalogContext.Add(category);
-                catalogContext.SaveChanges();
+                await catalogContext.ProductCategories.AddAsync(category);
+                await catalogContext.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -35,7 +34,7 @@ namespace Catalog.Api.Controllers
             }
         }
         [HttpPut("edit")]
-        public IActionResult Edit(EditProductCategoryCommand command)
+        public async Task<IActionResult> EditAsync(EditProductCategoryCommand command)
         {
             try
             {
@@ -44,7 +43,7 @@ namespace Catalog.Api.Controllers
                 if (category == null)
                     throw new KeyNotFoundException();
                 category.Edit(command.Title);
-                catalogContext.SaveChanges();
+                await catalogContext.SaveChangesAsync();
                 return Ok();
             }
             catch (Exception ex)
@@ -80,7 +79,7 @@ namespace Catalog.Api.Controllers
 
         }
 
-        [HttpGet("")]
+        [HttpGet("getAll")]
         public ActionResult<List<ProductCategoryDTO>> GetAll()
         {
             List<ProductCategoryDTO> categories = catalogContext.ProductCategories.Include(x => x.Products)

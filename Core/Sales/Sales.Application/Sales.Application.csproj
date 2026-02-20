@@ -12,18 +12,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="13.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.Application\Common.Application.csproj" />
     <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="BillUseCases\Commands\" />
-    <Folder Include="BillUseCases\Queries\" />
+    <Folder Include="PriceLabelUseCases\Command\" />
+    <Folder Include="PriceLabelUseCases\CommandHandlers\" />
+    <Folder Include="PriceLabelUseCases\External\Events\" />
   </ItemGroup>
 
 </Project>

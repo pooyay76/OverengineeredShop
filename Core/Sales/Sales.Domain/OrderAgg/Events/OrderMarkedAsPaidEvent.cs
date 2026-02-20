@@ -1,8 +1,9 @@
-﻿using Sales.Domain.Common.Base;
+﻿using Common.Domain.Base;
 
 namespace Sales.Domain.OrderAgg.Events
 {
-    public class OrderMarkedAsPaidEvent : IDomainEvent
+    public record OrderMarkedAsPaidEvent : EventBase
     {
+
     }
 }

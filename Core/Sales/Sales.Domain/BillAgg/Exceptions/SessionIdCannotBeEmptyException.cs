@@ -1,9 +1,7 @@
-﻿using Sales.Domain.Common.Base;
-
-namespace Sales.Domain.BillAgg.Exceptions
+﻿namespace Sales.Domain.BillAgg.Exceptions
 {
     [Serializable]
-    internal class SessionIdCannotBeEmptyException : DomainException
+    internal class SessionIdCannotBeEmptyException : Exception
     {
         private const string _message = "";
 

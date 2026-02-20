@@ -6,14 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="13.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="BillAgg\Events\" />
     <Folder Include="DiscountAgg\Events\" />
     <Folder Include="DiscountAgg\Exceptions\" />
     <Folder Include="OrderAgg\ValueObjects\" />
     <Folder Include="PaymentSessionAgg\Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.Domain\Common.Domain.csproj" />
   </ItemGroup>
 
 

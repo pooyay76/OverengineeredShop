@@ -1,11 +1,11 @@
-﻿using MediatR;
-using Sales.Domain.BillAgg.Events;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Sales.Events.Global;
 using Sales.Domain.OrderAgg.Contracts;
 using Sales.Domain.OrderAgg.Models;
 
 namespace Sales.Domain.OrderAgg.EventHandlers
 {
-    public class CreateOrderOnBillPaidEventHandler : INotificationHandler<BillPaidEvent>
+    public class CreateOrderOnBillPaidEventHandler : EventHandlerBase<BillPaidEvent>
     {
         private readonly IOrderRepository orderRepository;
         private readonly IWarehouseServices warehouseServices;
@@ -15,7 +15,7 @@ namespace Sales.Domain.OrderAgg.EventHandlers
             this.warehouseServices = warehouseServices;
         }
 
-        public async Task Handle(BillPaidEvent @event, CancellationToken cancellationToken)
+        public override async Task HandleAsync(BillPaidEvent @event)
         {
             bool reserveResult = await warehouseServices.ReserveItems(@event.PurchasedItems);
             Order order = new(@event.CustomerId, @event.AggregateId, @event.Amount, @event.PurchasedItems, reserveResult);

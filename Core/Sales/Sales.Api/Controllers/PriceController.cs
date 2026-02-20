@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Domain.Language.Catalog.ValueObjects;
+using Microsoft.AspNetCore.Mvc;
 using Sales.Api.Contracts.ProductItemPriceContracts.Commands;
 using Sales.Api.Contracts.ProductItemPriceContracts.Queries;
-using Sales.Domain.Common;
 using Sales.Domain.PriceLabelAgg.Models;
 using Sales.Infrastructure.Persistence;
 
 namespace Sales.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("sales/[controller]")]
     public class PriceController : ControllerBase
     {
         private readonly SalesDbContext salesContext;

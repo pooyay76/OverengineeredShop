@@ -1,14 +1,15 @@
-﻿using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
-using Sales.Domain.Common.Base;
-using Sales.Domain.Common.ValueObjects;
+﻿using Common.Domain.Base;
+using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
+using Sales.Domain.BillAgg.Models;
+
 using Sales.Domain.OrderAgg.Events;
 
 namespace Sales.Domain.OrderAgg.Models
 {
-    public class Order : AggregateRoot<OrderId>
+    public class Order : AggregateRootBase<OrderId>
     {
-        internal Order(CustomerId customerId, BillId billId, Money amount, List<ProductItemQuantity> productItems, bool isEverythingInStock)
+        internal Order(UserId customerId, BillId billId, Money amount, List<ProductItemQuantity> productItems, bool isEverythingInStock)
         {
 
             BillId = billId;
@@ -22,9 +23,9 @@ namespace Sales.Domain.OrderAgg.Models
                 OrderStatus = OrderStatus.AwaitingConfirmation;
             CreationDateTime = DateTime.UtcNow;
             IsInStock = isEverythingInStock;
-            AddDomainEvent(new NewOrderPlacedEvent(Id));
+            AddEvent(new NewOrderPlacedEvent(Id));
         }
-        public CustomerId CustomerId { get; init; }
+        public UserId CustomerId { get; init; }
         public Money OrderTotal { get; init; }
         public bool IsInStock { get; private set; }
         public DateTime CreationDateTime { get; private set; }
@@ -36,17 +37,17 @@ namespace Sales.Domain.OrderAgg.Models
         internal void MarkAsRefunded()
         {
 
-            AddDomainEvent(new OrderMarkedAsRefundedEvent(Id));
+            AddEvent(new OrderMarkedAsRefundedEvent(Id));
 
         }
         internal void MarkAsShipped()
         {
-            AddDomainEvent(new OrderShippedEvent(Id));
+            AddEvent(new OrderShippedEvent(Id));
 
         }
         internal void MarkAsDelivered()
         {
-            AddDomainEvent(new OrderDeliveredEvent(Id));
+            AddEvent(new OrderDeliveredEvent(Id));
 
         }
 

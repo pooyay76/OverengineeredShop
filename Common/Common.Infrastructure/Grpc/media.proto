@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "Common.Infrastructure.Grpc";
+
+package media;
+
+service MediaServices{
+	rpc GetMedias(GetMediasRequest) returns (GetMediasResponse);
+	rpc UploadMedia(UploadMediaRequest) returns (UploadMediaResponse);
+	
+}
+message UploadMediaRequest{
+	bytes data = 1;
+	string filetype = 2;
+	string fileSection=3;
+}
+message UploadMediaResponse{
+	int64 id = 1;
+	string media_path = 2;
+}
+
+message GetMediasRequest{
+	repeated int64 ids = 1;
+}
+
+message MediaDto {
+  int64 id=1;
+  string media_path = 3;
+}
+
+message GetMediasResponse {
+  repeated MediaDto media_list = 1;
+}

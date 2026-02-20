@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Domain.Global.ValueObjects;
+using Common.Domain.Sales.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common;
-using Sales.Domain.DiscountAgg.Models;
 namespace Sales.Infrastructure.Persistence.Configurations
 {
     public class BillEntityConfigurations : IEntityTypeConfiguration<Bill>
@@ -15,8 +15,7 @@ namespace Sales.Infrastructure.Persistence.Configurations
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasConversion(x => x.Value, x => new BillId(x));
             builder.Property(x => x.BillDiscountId).HasConversion(x => x.Value, x => new DiscountId(x));
-
-            builder.Property(x => x.CustomerId).HasConversion(x => x.Value, x => new CustomerId(x));
+            builder.Property(x => x.CustomerId).HasConversion(x => x.Value, x => new UserId(x));
             //foreach (var property in typeof(Bill).GetProperties())
             //{
             //    // Check if the property type is Money

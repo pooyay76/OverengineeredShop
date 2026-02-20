@@ -1,0 +1,162 @@
+steps to create monolithic api:
+
+1-create project with the given name + ".Api"
+
+2-add packages and reference to common.infrastructure
+
+3-delete weatherforecast stuff
+
+4-create folders:
+Data, Models, Exceptions, External (if it has any external connections), Event Handlers, Middlewares, Commands
+
+5-create a folder in Common.Language with the name of the new project
+
+6-create two folders in the above folder named Events and ValueObjects
+
+7-create stronglytypedid record in ValueObjects folder and inherit from StronglyTypedId, also write two constructors
+that pass on to their base constructors one has no params and the other takes Guid
+
+8-create EntityCreatedEvent and EntityRemovedEvent records in events folder and inherit from EventBase
+
+9-create Entity in models and inherit from AggregateRootBase<stronglytypedid> using the created stronglytypedid and
+dont forget private parameterless constructor for ef
+
+10-create {EntityName}TypeConfiguration.cs in Data/Configurations,define table,key and stronglytypedid conversion,
+also add .ValueGeneratedOnAdd() to the conversion.
+
+11-create DbContext with the name "{ProjectName}Context" in Data folder and inherit from ShopDbContextBase, add 
+DbSet<{EntityName}> property and apply entitytypeconfig (this will be in dbcontextbase later,
+then you wont need to apply it every time), also you should pass DbContextOptions and EventPublisherInterceptor 
+to base dbcontext constructor
+
+12-create a controller for the entity with the name "{EntityController}" and inherit: ControllerBase, also add attributes:
+	[ApiController] [Route("api/[controller]")] and inject {ProjectName}Context
+
+13-create exception middleware 
+
+14-configure appsettings ( remember to change the name of the db table after paste :) )
+
+15-configure program.cs: get connectionstring, register dbcontext, CommonServiceRegistry.Configure(), add exception
+middleware, add json converters by using the .AddJsonOptions method after.AddControllers() like this:
+
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    foreach (var converter in EventSerializer.options.Converters)
+    {
+        x.JsonSerializerOptions.Converters.Add(converter);
+    }
+});
+
+16-define converters in EventSerializer class for both complex value objects and stronglytypedids like this:
+
+        public static JsonSerializerOptions options = new(){
+            Converters = {
+                        new MoneyJsonConverter(),
+                        new StronglyTypedIdJsonConverter<ProductId>()
+	}};
+
+***NOTICE how we also registered moneyjsonconverter, a value object; that is because value objects are complex
+types and need custom written converters. if you add value objects to controller params, remember that you need:
+ jsonconverter if you take json params [FromBody], typeconverter if you are using [FromForm]
+***
+
+NOTES:
+***DONT CHANGE MODEL NAMES OR EVENT NAMES IN PRODUCTION, CHANGING THEM WILL BREAK EVENT SOURCING!!!!
+
+***ALL PROPERTY ASSIGNMENTS INSIDE MODELS SHOULD BE WRITTEN IN Apply(Event) METHODS, OTHERWISE IT WILL BREAK EVENT
+SOURCING!!!!
+
+***ALL THE CONVERTERS in EventSerializer CLASS WILL ALSO BE REGISTERED IN CONTROLLERS :)
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+steps after creating the project:
+
+1- write the events in common.language.{ProjectName} as records and inherit from EventBase
+2- write model properties and methods (dont forget to set properties only in apply methods!) 
+3- if you add value objects, write a converter and add it to event serializer
+3- write the db mappings
+4- write the command classes in the Commands folder and inherit from CommandBase
+5- write the controller method and make return of type ApplicationResponse or ApplicationResponse<T>
+6- make migrations and update database
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+steps to create grpc service:
+
+1-write .proto file to define methods and DTOs
+
+2-in client:
+	1-add Grpc.AspNetCore package
+	2-put a copy of .proto in: Infrastructure/External/Client
+	3-add ItemGroup and include .proto file in .csproj file like this:
+		<ItemGroup>
+			<Protobuf Include="External\Client\warehouse.proto" GrpcServices="Client" />
+		</ItemGroup>
+
+	4-build the project
+	5-register services for client like this:
+
+			builder.Services.AddGrpc();
+
+		and for each client:
+          		builder.Services.AddGrpcClient<MediaServices.MediaServicesClient>(x=>
+          		{
+           			x.Address=new Uri(builder.Configuration.GetSection("External")["MediaHost"]);
+           		});
+
+
+	6-write an interface in application layer
+
+	7-implement in infrastructure layer (inject the class that is builded from .proto files)
+
+3-in server:
+
+	1-add Grpc.AspNetCore package
+	2-put a copy of .proto in: Infrastructure/External/Server
+
+	3-add ItemGroup and include .proto file in .csproj file like this:
+		<ItemGroup>
+			<Protobuf Include="External\Server\warehouse.proto" GrpcServices="Server" />
+		</ItemGroup>
+
+	4-build the project
+
+	5-add a .cs file beside .proto and inherit the class builded
+	from .proto file and override methods to implement
+
+	6-register services for server like this:
+
+			builder.Services.AddGrpc();
+
+		and for each server service add the file that inherits the builded class from .proto :
+
+			app.MapGrpcService<CatalogExternalServices>();
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+steps to create integration event:
+
+0- set up kafka docker file
+1- add package "Confluent.Kafka"
+2- make the integration event in Common.Domain.Language.Global.Events and inherit from IntegrationEventBase
+3- add kafka bootstrap server address + group id to appsettings
+
+for client its done, the eventpublisher invokes eventproducer which communicates with kafka using appsettings cfg.
+
+for server we need 1 additional step:
+
+4- in infrastructure-> register event consumer using the pre-written generic class like this:
+            serviceCollection.AddHostedService<KafkaEventConsumerBackgroundService<NewPriceAddedEvent>>();
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+steps to add domain event + event handlers:
+
+1- create event in Common.Domain.Language.{ProjectName} and inherit from EventBase
+2- use AddEvent where you want the event to be published (dont forget the apply method if properties need changing)
+3- create event handler in application layer, and inherit from EventHandlerBase<>

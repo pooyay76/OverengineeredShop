@@ -1,5 +1,5 @@
-﻿using Sales.Domain.Common;
-using Sales.Domain.External;
+﻿using Common.Domain.Language.Catalog.ValueObjects;
+using Sales.Domain.Contracts;
 
 namespace Sales.Infrastructure.External.Client.Catalog
 {

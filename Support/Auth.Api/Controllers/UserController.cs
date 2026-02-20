@@ -1,9 +1,12 @@
-using Auth.Api.Data;
+using Auth.Api.Commands;
+using Auth.Api.Infrastructure;
+using Auth.Api.Infrastructure.Data;
 using Auth.Api.Models;
 using Auth.Api.Options;
-using Auth.Api.Utility;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Api.Controllers;
 
@@ -13,20 +16,22 @@ public class UserController : ControllerBase
 {
     private readonly AuthContext authContext;
     private readonly JwtOptions jwtOptions;
+    private readonly SigningCredentials signingCredentials;
 
 
-    public UserController(AuthContext authContext, IOptions<JwtOptions> options)
+    public UserController(AuthContext authContext, IOptions<JwtOptions> options, SigningCredentials signingCredentials)
     {
         this.authContext = authContext;
         jwtOptions = options.Value;
+        this.signingCredentials = signingCredentials;
     }
 
     [HttpPost("login")]
-    public IActionResult Login(string phoneNumber, string password)
+    public async Task<IActionResult> LoginAsync([FromBody]LoginCommandDto command)
     {
 
         //we search the database for the given phone number
-        var user = authContext.Users.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+        var user = await authContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == command.PhoneNumber);
         //if not found return exception
         if (user == null)
         {
@@ -38,7 +43,7 @@ public class UserController : ControllerBase
         {
 
             //if not equal, return exception
-            if (CryptographyUtility.VerifyPassword(password, user.Password) == false)
+            if (CryptographyUtility.VerifyPassword(command.Password, user.Password) == false)
             {
                 return Unauthorized();
             }
@@ -47,10 +52,10 @@ public class UserController : ControllerBase
             //generate a JWT token string and return it
             else
             {
-                var token = JwtTokenIssuer.IssueJwtToken(user.Id, jwtOptions.TokenKey, jwtOptions.TokenTimeout);
+                var token = JwtTokenIssuer.IssueJwtToken(user.Id, signingCredentials, jwtOptions.Issuer,jwtOptions.Audience ,jwtOptions.TokenTimeout);
                 var refreshToken = CryptographyUtility.GenerateRefreshToken();
-                authContext.UserRefreshTokens.Add(new UserRefreshToken(user.Id, refreshToken, jwtOptions.TokenTimeout));
-                authContext.SaveChanges();
+                await authContext.UserRefreshTokens.AddAsync(new UserRefreshToken(user.Id, refreshToken, jwtOptions.TokenTimeout));
+                await authContext.SaveChangesAsync();
                 return Ok(new Dictionary<string, string>
                 {
                     {"token",token },
@@ -63,53 +68,69 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult Register(string phoneNumber, string fName, string lName, string password)
+    public async Task<IActionResult> RegisterAsync([FromBody]RegisterCommandDto command)
     {
         //we search the database for the given phonenumber
-        var user = authContext.Users.FirstOrDefault(x => x.PhoneNumber == phoneNumber);
+        var user = await authContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == command.PhoneNumber);
         //if any of them was found return "username/email already exists" exception 
         if (user != null)
         {
-            throw new Exception();
+            throw new Exception("An account with the same phone number already exists please use forgot password to recover your account");
         }
 
         //else
         //hash the password (here we can also check if the password is strong enough before hashing)
-        var hashedPw = CryptographyUtility.HashPassword(password);
+        var hashedPw = CryptographyUtility.HashPassword(command.Password);
         //create a new record in DB for the new user (remember to make IsEmailConfirmed column false)
-        User newUser = new(fName, lName, phoneNumber, hashedPw);
+        User newUser = new(command.FName, command.LName, command.PhoneNumber, hashedPw);
 
 
-        authContext.Add(newUser);
+        await authContext.AddAsync(newUser);
         //generate a JWT token string and return it
-        var token = JwtTokenIssuer.IssueJwtToken(newUser.Id, jwtOptions.TokenKey, jwtOptions.TokenTimeout);
-        var refreshToken = CryptographyUtility.GenerateRefreshToken();
-        authContext.UserRefreshTokens.Add(new UserRefreshToken(user.Id, refreshToken, jwtOptions.TokenTimeout));
-        authContext.SaveChanges();
+        var token = JwtTokenIssuer.IssueJwtToken(newUser.Id, signingCredentials,jwtOptions.Issuer,jwtOptions.Audience ,
+            jwtOptions.TokenTimeout);
+
+        var refreshToken = new UserRefreshToken(newUser.Id, CryptographyUtility.GenerateRefreshToken(), jwtOptions.TokenTimeout);
+        await authContext.UserRefreshTokens.AddAsync(refreshToken);
+        await authContext.SaveChangesAsync();
+
+
 
         return Ok(new Dictionary<string, string>
         {
             {"token",token },
-            {"refreshToken",refreshToken },
+            {"refreshToken",refreshToken.RefreshToken },
             {"timeout",jwtOptions.TokenTimeout.ToString()}
         });
     }
 
 
-    [HttpPost("refresh")]
-    public IActionResult RenewToken(Guid userId, string refreshToken)
+    [HttpGet("get")]
+    public async Task<IActionResult> GetAsync()
     {
-        var user = authContext.UserRefreshTokens.FirstOrDefault(x => x.RefreshToken == refreshToken && x.UserId == userId && x.IsValid);
+       var userIdString = Request.Headers["X-User-Id"].FirstOrDefault();
+       Guid userId;
+       if (string.IsNullOrWhiteSpace( userIdString) || Guid.TryParse(userIdString,out userId) == false)
+           return BadRequest();
+        var user = await authContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        return Ok(user);
+    }
+
+        [HttpPost("refresh")]
+    public async Task<IActionResult> RenewTokenAsync(Guid userId, string refreshToken)
+    {
+        var user = await authContext.UserRefreshTokens.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken && x.UserId == userId && x.IsValid);
         if (user == null)
         {
             throw new Exception();
         }
         else
         {
-            var token = JwtTokenIssuer.IssueJwtToken(userId, jwtOptions.TokenKey, jwtOptions.TokenTimeout);
+            var token = JwtTokenIssuer.IssueJwtToken(userId, signingCredentials, jwtOptions.Issuer, jwtOptions.Audience,
+                jwtOptions.TokenTimeout);
             var newRefreshToken = CryptographyUtility.GenerateRefreshToken();
-            authContext.UserRefreshTokens.Add(new UserRefreshToken(userId, newRefreshToken, jwtOptions.TokenTimeout));
-            authContext.SaveChanges();
+            await authContext.UserRefreshTokens.AddAsync(new UserRefreshToken(userId, newRefreshToken, jwtOptions.TokenTimeout));
+            await authContext.SaveChangesAsync();
             return Ok(new Dictionary<string, string>
         {
             {"token",token },

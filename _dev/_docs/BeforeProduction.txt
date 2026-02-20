@@ -1,0 +1,8 @@
+1- Manage secrets
+2- go fill out appsettings configs for each api
+3- Generate JWT keys using openssl
+4- Make JWT meta data require https:                     x.RequireHttpsMetadata = false;
+5- Configure rate limiting, load balancer in YARP
+6- Configure docker ports and make services internal to gateway
+7- Https certificates
+7- Make another docker-compose file for production

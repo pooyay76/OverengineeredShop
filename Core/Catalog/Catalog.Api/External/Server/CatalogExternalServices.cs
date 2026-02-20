@@ -17,7 +17,7 @@ namespace Catalog.Api.External.Server
         {
             var result = new ProductExistsResponse
             {
-                Exists = await catalogContext.Products.AnyAsync(x => x.Id == request.Id)
+                Exists = await catalogContext.Products.AnyAsync(x => x.Id.Value.ToString() == request.Id)
             };
             return result;
 

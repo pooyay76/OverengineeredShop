@@ -1,12 +1,11 @@
-﻿using Catalog.Api.Models;
-using Catalog.Api.Models.ValueObjects;
+﻿using Common.Domain.Language.Catalog.ValueObjects;
 
 namespace Catalog.Api.Commands
 {
     public class CreateProductItemCommand
     {
-        public long ProductId { get; set; }
-        public Money Price { get; set; }
+        public ProductId ProductId { get; set; }
+        public decimal Price { get; set; }
         public Dictionary<string, string> ItemFeatures { get; set; } = [];
 
     }

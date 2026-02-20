@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Common.Domain.Language.Global.ValueObjects;
+using Common.Domain.Language.Sales.ValueObjects;
+using Microsoft.Extensions.Options;
 using Sales.Domain.BillAgg.Contracts;
 using Sales.Domain.BillAgg.Models;
-using Sales.Domain.Common.ValueObjects;
-using Sales.Infrastructure.Configurations;
+using Sales.Infrastructure.Options;
 using System.Text;
 using System.Text.Json;
 
